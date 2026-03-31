@@ -1,0 +1,29 @@
+h1{
+    color: blue;
+}
+.alert{
+    background-color: yellow;
+    padding: 15px;
+    border: 1px solid orange;
+}
+#header{
+    text-align: center;
+}
+input[type="text"]{
+    border: 1px solid green;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+h2 + p{
+    margin-top: 10px;
+}
+div p{
+    color: red;
+}
+.task{
+    font-weight: bold;
+    cursor: pointer;
+}
+.task:hover{
+    color: purple;
+}

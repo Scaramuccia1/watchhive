@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="device-width, initial-scale=1.0">
+        <title>Калькулятор заказов</title>
+        <style>
+            .result{ font-weight: bold; margin-top: 20px; }
+            label{ display: block; margin:10px 0; }
+            #promocode { padding: 8px; width: 200px; margin: 10px 0; }
+            .promo-status { font-size: 12px; margin-left: 10px; }
+            .promo-valid { color: green; }
+            .promo-invalid { color: red; }
+        </style>
+    </head>
+    <body>
+        <h1>Калькулятор суммы заказов</h1>
+        
+        <label for="quantity">Количество товаров:</label>
+        <input type="range" id="quantity" name="quantity" min="0" max="10" value="0">
+        <span id="quantityValue">0</span>
+        
+        <label>Варианты доставки</label>
+        <label><input type="radio" name="delivery" value="500" checked>Курьер (500р)</label>
+        <label><input type="radio" name="delivery" value="200">Почта (200р)</label>
+        <label><input type="radio" name="delivery" value="0">Сам (0р)</label>
+        <label><input type="checkbox" id="payment">Оплата картой (+50р)</label>
+        <label for="promocode">Промокод:</label>
+        <input type="text" id="promocode" placeholder="Введите промокод">
+        <span id="promoStatus" class="promo-status"></span>
+        
+        <button id="calculate">Рассчитать</button>
+        <div class="result" id="result"></div>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+        let correctPromocode = "4RT7C1VB";
+
+        $(document).ready(function(){
+            $("#quantity").on("input", function(){
+                $("#quantityValue").text($(this).val());
+            });
+            $("#calculate").on("click", function(){
+                let quantity = parseInt($("#quantity").val()) || 0;
+                let deliveryVal = $('input[name="delivery"]:checked').val();
+                let deliveryCost = deliveryVal ? parseInt(deliveryVal) : 0;
+                let paymentFee = $("#payment").is(":checked") ? 50 : 0;
+                let totalCost = (quantity * 100) + deliveryCost + paymentFee;
+                let enteredPromo = $("#promocode").val().trim().toUpperCase();
+                let promoMessage = "";
+                if (enteredPromo === correctPromocode) {
+                    totalCost = totalCost * 0.9;
+                    promoMessage = " Промокод 10% применен";
+                    $("#promoStatus").text("Верный").removeClass("promo-invalid").addClass("promo-valid");
+                } else if (enteredPromo !== "") {
+                    promoMessage = " Промокод не применен";
+                    $("#promoStatus").text("Неверный").removeClass("promo-valid").addClass("promo-invalid");
+                } else {
+                    $("#promoStatus").text("");
+                }
+                $("#result").text("Итоговая сумма заказа: " + Math.round(totalCost) + " руб." + promoMessage);
+            });
+            $("#promocode").on("input", function(){
+                $("#promoStatus").text("");
+            });
+        });
+        </script>
+    </body>
+</html>

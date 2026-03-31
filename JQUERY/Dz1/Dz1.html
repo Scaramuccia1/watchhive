@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Галерея слайдера на jQuery</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .gallery {
+            position: relative;
+            max-width: 600px;
+            margin: auto;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .slides {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+        .slide {
+            min-width: 100%;
+            transition: opacity 1s ease;
+            opacity: 0;
+        }
+        .active {
+            opacity: 1;
+        }
+        .slide.clone {
+            opacity: 0;
+        }
+        button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(255, 255, 255, 0.8);
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+        .prev {
+            left: 10px;
+        }
+        .next {
+            right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Галерея слайдера</h1>
+    <div class="gallery">
+        <div class="slides">
+            <img src="https://bakoomwak.ru/works/2021plus/3.png" alt="Изображение 3" class="slide clone">
+            <img src="https://bakoomwak.ru/works/2021plus/1.png" alt="Изображение 1" class="slide active">
+            <img src="https://bakoomwak.ru/works/2021plus/2.png" alt="Изображение 2" class="slide">
+            <img src="https://bakoomwak.ru/works/2021plus/3.png" alt="Изображение 3" class="slide">
+            <img src="https://bakoomwak.ru/works/2021plus/1.png" alt="Изображение 1" class="slide clone">
+        </div>
+        <button class="prev">Назад</button>
+        <button class="next">Вперед</button>
+    </div>
+    <script>
+        $(document).ready(function() {
+            let currentIndex = 1;
+            const slides = $('.slide');
+            const totalSlides = slides.length;
+            const originalCount = 3;
+            let isAnimating = false;
+
+            function showSlide(index, animate = true) {
+                if (!animate) {
+                    $('.slides').css('transition', 'none');
+                } else {
+                    $('.slides').css('transition', 'transform 0.5s ease');
+                }
+                slides.removeClass('active');
+                slides.eq(index).addClass('active');
+                const offset = -index * 100;
+                $('.slides').css('transform', `translateX(${offset}%)`);
+            }
+            $('.next').click(function() {
+                if (isAnimating) return;
+                isAnimating = true;
+                currentIndex++;
+                showSlide(currentIndex, true);
+                if (currentIndex >= totalSlides - 1) {
+                    setTimeout(function() {
+                        $('.slides').css('transition', 'none');
+                        currentIndex = 1;
+                        showSlide(currentIndex, false);
+                        isAnimating = false;
+                    }, 500);
+                } else {
+                    setTimeout(function() {
+                        isAnimating = false;
+                    }, 500);
+                }
+            });
+            $('.prev').click(function() {
+                if (isAnimating) return;
+                isAnimating = true;
+                currentIndex--;
+                showSlide(currentIndex, true);
+                if (currentIndex <= 0) {
+                    setTimeout(function() {
+                        $('.slides').css('transition', 'none');
+                        currentIndex = originalCount;
+                        showSlide(currentIndex, false);
+                        isAnimating = false;
+                    }, 500);
+                } else {
+                    setTimeout(function() {
+                        isAnimating = false;
+                    }, 500);
+                }
+            });
+            showSlide(currentIndex, false);
+        });
+    </script>
+</body>
+</html>

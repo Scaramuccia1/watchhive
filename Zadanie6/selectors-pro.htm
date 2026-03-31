@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Пример сложных селекторов CSS</title>
+    <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=6ZCBXmzQ_BZLNJmI89ehzXsPRXfw1d7Zx9kEwmqCjk55yKHQlA5ZyIxuqZkr0ey-U5yBr5NVz2DoB7q4rrxC3e5LQHeaDoOQXssoEDnr9-w5LqW1eLlPjZlV8xJ7suR31ob3ITA9yLAUYWL3cBuEzQ6JzcpkQIt6UcEzcsbHqRwCnGBFGXYOb8tnURoQlzRCB2yDJ_0eKpoxRd6mfVzwI2jj0T-EmEHT_2Yjt01V5BTNwYSmlcLIMdjJENMYw3foYsWTp7e36XO6pkR66WjJC-oAaVQB7xZIVzQeDL_5GjKhSeZCdpxBRvZyZ4fHifPaS4b-UuYzli133dHHGdnbzgI9uYxyr_8HOqs_AXCLe2IR3QhXyfmQ59o-0gXafuok5ZLQVs_QRjsI1NbtvOtah7Rs-TSxByYaqLz5dKYCTw7LGvAvy7uA6nbOf-4ANfmiNqrb27Xyy-8hIVFxRsl2nvAnv9rLim-5Md1JNDrZLT5AufsRrScv3dv-10EodIVomuYpVqzJw7xCCnRK6prz3kKw8meBKO5nkP8Eo9LJdamBMI4aP6L5hxsPyyrC1H0khbSaIPkG6BI_IsQkSmUNaN0Hu-l7GpstLZrfU8NT5IykntI6ME1W_HpxVciuglklkbx0EdjV2IXEE5-5bvAuEJKqIhh_Ecb6sqSLsg_d_pFi3m6FbA-_Het19vqq-q1mc-E29rDfJCrj9oURH8hWTlv5OgQpNuaKwS7KwIRcOeR0HM0KC1cdnV0RDeletxDlnr5v_7FoL-toOkVwwbFIwbAsJiO2iaNUEnPgk7f9bOKWbYQ2LIUd6An6hWAXzllf6piDqGbsAasDr3bRRU4Pjw" charset="UTF-8"></script><style>
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+}
+
+h1 {
+    color: #4CAF50;
+}
+
+.alert {
+    background-color: #ffcccc;
+    padding: 10px;
+    border: 1px solid red;
+}
+
+.alert p {
+    font-weight: bold;
+}
+
+.alert a {
+    color: red;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+ul > li:hover {
+    background-color: #e0e0e0; /* Изменение фона элемента списка при наведении */
+}
+
+p::first-line {
+    font-weight: bold; /* Задаем жирный шрифт первой строки */
+}
+
+h2::after {
+    content: " - Заметка"; /* Добавляем заметку после заголовка */
+}
+</style>
+</head>
+<body>
+    <h1>Пример селекторов</h1>
+    <div class="alert">
+        <p>Имя: <a href="#" target="_blank" title="Ссылка на профиль" alt="профиль">Пользователь</a></p>
+    </div>
+    <ul>
+        <li>Элемент 1</li>
+        <li>Элемент 2</li>
+        <li>Элемент 3</li>
+    </ul>
+    <p>Пример текста с <span>вложенным элементом</span>.</p>
+    <h2>Заголовок</h2>
+    <h2>Пример заголовка с дополнительным текстом</h2>
+    <p>Это простой текст для теста.</p>
+</body>
+</html>

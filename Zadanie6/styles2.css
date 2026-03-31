@@ -1,0 +1,29 @@
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f0f0f0;
+}
+h1{
+    color: #4CAF50;
+}
+.alert{
+    background-color: #ffcccc;
+    border: 1px solid red;
+}
+.alert p{
+    font-weight: bold;
+}
+.alert a{
+    color: red;
+}
+ul{
+    list-style-type: none;
+}
+ul > li:hover{
+    background-color: #e0e0e0;
+}
+p::first-line{
+    font-weight: bold;
+}
+h2::after{
+    content: "- Заметка";
+}

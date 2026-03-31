@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Наследование классов</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .output { background: #f4f4f4; padding: 15px; border-radius: 5px; margin-top: 20px; }
+        .output p { margin: 5px 0; }
+    </style>
+</head>
+<body>
+    <h1>Классы животных</h1>
+    <button onclick="run()">Запустить пример</button>
+    <div class="output" id="output"></div>
+
+    <script>
+        class Animal {
+            constructor(name, age) {
+                this.name = name;
+                this.age = age;
+            }
+            speak() {
+                return `${this.name} издаёт звук`;
+            }
+        }
+        class Bird extends Animal {
+            constructor(name, age, wingspan) {
+                super(name, age);
+                this.wingspan = wingspan;
+            }
+            fly() {
+                return `${this.name} летает размах: ${this.wingspan} см`;
+            }
+        }
+        class Dog extends Animal {
+            constructor(name, age, breed) {
+                super(name, age);
+                this.breed = breed;
+            }
+            bark() {
+                return `${this.name} лает: Гав-гав!`;
+            }
+        }
+        class Frog extends Animal {
+            constructor(name, age, color) {
+                super(name, age);
+                this.color = color;
+            }
+            jump() {
+                return `${this.name} прыгает`;
+            }
+        }
+        function run() {
+            const out = document.getElementById('output');
+            out.innerHTML = '';
+
+            const bird = new Bird(" ", 2, 25);
+            const dog = new Dog(" ", 4);
+            const frog = new Frog(" ", 1);
+
+            [bird, dog, frog].forEach(animal => {
+                let msg = `<p><strong>${animal.constructor.name}</strong>: ${animal.name}, ${animal.age} г.`;
+                if (animal.speak) msg += `<br>${animal.speak()}`;
+                if (animal.fly) msg += `<br>${animal.fly()}`;
+                if (animal.bark) msg += `<br>${animal.bark()}`;
+                if (animal.jump) msg += `<br>${animal.jump()}`;
+                msg += `</p>`;
+                out.innerHTML += msg;
+            });
+        }
+    </script>
+</body>
+</html>

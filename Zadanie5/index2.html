@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width", initial-scale="1.0">
+        <title>Примеры фоновых стилей CSS</title>
+        <style>
+            body{
+                margin: 0;
+                font-family: Arial, Helvetica, sans-serif;
+                padding: 20px;
+                background-color: #f5f5f5;
+            }
+            .combo-background{
+                background-image: url('https://bakoomwak.ru/works/2021plus/2.png');
+                background-color: #333;
+                background-repeat: no-repeat;
+                background-position: center;
+                background-size: cover;
+                background-attachment: fixed;
+                height: 400px;
+                color: white;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            .title{
+                position: relative;
+                font-size: 24px;
+                margin: 20px 0;
+            }
+            .title::before{
+                content: "ϟ";
+                color: gold;
+            }
+            .title::after{
+                content: "(новая)";
+                color: red;
+            }
+            .fixed-background{
+                background-image: url('https://bakoomwak.ru/works/2021plus/2.png');
+                background-size: cover;
+                height: 300px;
+                padding: 20px;
+            }
+            .size-background{
+                background-image: url('https://bakoomwak.ru/works/2021plus/2.png');
+                background-size: contain;
+                height: 300px;
+            }
+            .origin-background{
+                background-image: url('https://bakoomwak.ru/works/2021plus/2.png');
+                height: 300px;
+                padding: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="combo-background">Это пример фона с множественными свойствами</div>
+        <div class="title">Пример заголовка с псевдоэлементами</div>
+        <div class="fixed-background">Фон с фиксацией при прокрутке</div>
+        <div class="size-background">Фон который полностью покрывает блок</div>
+        <div class="origin-background">Фон с определением области</div>
+    </body>
+</html>

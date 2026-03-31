@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Форма регистрации</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        input {
+            display: block;
+            margin: 10px 0;
+            padding: 8px;
+            width: 300px;
+        }
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h2>Регистрация</h2>
+    <form id="registrationForm">
+        <input type="text" id="userName" placeholder="Введите ваше имя" required>
+        <input type="email" id="userEmail" placeholder="Введите вашу электронную почту" required>
+        <input type="password" id="userPassword" placeholder="Введите ваш пароль" required>
+        <button type="submit">Зарегистрироваться</button>
+    </form>
+    <h3>Промокод</h3>
+    <form id="Promocod">
+        <input type="promo" id="userPromo" placeholder="Введите промокод" required>
+        <button type="submit">Активировать промокод</button>
+    </form>
+    <script>
+    document.getElementById('userPromo').oninput = e => e.target.value === '12345' && alert('Поздравляем!');
+    document.getElementById('registrationForm').onsubmit = e => {
+        e.preventDefault();
+        console.log({
+            userName: document.getElementById('userName').value,
+            userEmail: document.getElementById('userEmail').value,
+            userPassword: document.getElementById('userPassword').value
+        });
+    };
+    </script>
+</body>
+</html>

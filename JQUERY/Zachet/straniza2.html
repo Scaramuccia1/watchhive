@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Корзина</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #1a1a1f;
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            padding: 30px 20px;
+            margin-bottom: 30px;
+            background: rgba(35, 35, 43, 0.8);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .header h1 {
+            font-size: 2rem;
+            background: linear-gradient(90deg, #648cdc, #8e2de2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .header p {
+            color: #888;
+            font-size: 0.95rem;
+        }
+        .cart-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #23232b;
+            padding: 30px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        .cart-title {
+            font-size: 1.6rem;
+            margin-bottom: 25px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .cart-title i {
+            color: #648cdc;
+        }
+        .cart-items {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .cart-item {
+            background: rgba(42, 42, 53, 0.6);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .cart-item:hover {
+            background: rgba(42, 42, 53, 0.9);
+            transform: translateX(5px);
+            border-color: rgba(100, 140, 220, 0.3);
+        }
+        .item-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .item-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+        }
+        .item-price {
+            color: #648cdc;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        .item-qty {
+            background: rgba(100, 140, 220, 0.2);
+            color: #8ab4ff;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        .item-total {
+            text-align: right;
+            min-width: 100px;
+        }
+        .item-total-label {
+            font-size: 0.85rem;
+            color: #888;
+            margin-bottom: 4px;
+        }
+        .item-total-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #28a745;
+        }
+        .empty-msg {
+            text-align: center;
+            padding: 60px 20px;
+            color: #888;
+        }
+        .empty-msg i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #444;
+        }
+        .empty-msg p {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        .empty-msg a {
+            color: #648cdc;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .empty-msg a:hover {
+            text-decoration: underline;
+        }
+        .total-block {
+            margin-top: 25px;
+            padding: 25px;
+            background: linear-gradient(135deg, rgba(100, 140, 220, 0.1), rgba(142, 45, 226, 0.1));
+            border-radius: 12px;
+            border: 1px solid rgba(100, 140, 220, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .total-label {
+            font-size: 1.2rem;
+            color: #aaa;
+        }
+        .total-value {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .controls {
+            margin-top: 25px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+        .btn-clear {
+            background: linear-gradient(90deg, #dc3545, #c82333);
+            color: white;
+        }
+        .btn-clear:hover {
+            background: linear-gradient(90deg, #c82333, #bd2130);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(220, 53, 69, 0.4);
+        }
+        .btn-clear i { 
+            font-size: 0.9rem; 
+        }
+        .back-link {
+            background: linear-gradient(90deg, #648cdc, #4a6bb8);
+            color: white;
+            flex: 1;
+            justify-content: center;
+        }
+        .back-link:hover {
+            background: linear-gradient(90deg, #7a9cd6, #5a7bc0);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(100, 140, 220, 0.4);
+        }
+        .back-link i { 
+            font-size: 0.9rem; 
+        }
+        @keyframes slideIn {
+            from { transform: translateX(200px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; } to { opacity: 0; }
+        }
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4a4a5a;
+            color: white;
+            padding: 14px 25px;
+            border-radius: 50px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            z-index: 9999;
+            animation: slideIn 0.3s ease forwards, fadeOut 0.4s ease 2.6s forwards;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+        .notification.success { 
+            background: linear-gradient(90deg, #28a745, #20c997); 
+        }
+        .notification.error { 
+            background: linear-gradient(90deg, #dc3545, #c82333); 
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: rgba(255,255,255,0.5);
+            font-size: 0.85rem;
+            margin-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        @media (max-width: 768px) {
+            .cart-container {
+                padding: 20px;
+            }
+            .header h1 { font-size: 1.6rem; }
+            .cart-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            .item-total {
+                text-align: left;
+                width: 100%;
+                padding-top: 15px;
+                border-top: 1px solid rgba(255,255,255,0.1);
+            }
+            .total-block {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .total-value { font-size: 1.6rem; }
+            .controls { flex-direction: column; }
+            .btn { width: 100%; justify-content: center; }
+        }
+        @media (max-width: 480px) {
+            body { padding: 15px; }
+            .cart-container { padding: 15px; }
+            .header { padding: 20px 15px; }
+            .header h1 { font-size: 1.4rem; }
+            .cart-title { font-size: 1.3rem; }
+            .item-name { font-size: 1rem; }
+            .item-total-value { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1><i class="fas fa-shopping-cart"></i> WatchHive Store</h1>
+        <p>Ваша корзина покупок</p>
+    </header>
+    <main class="cart-container">
+        <h2 class="cart-title">
+            <i class="fas fa-shopping-basket"></i>
+            Ваша корзина
+        </h2>
+        <div id="cart-items" class="cart-items">
+        </div>
+        
+        <div class="total-block" id="total-block" style="display:none;">
+            <span class="total-label">Итого к оплате:</span>
+            <span class="total-value" id="total-sum">0 ₽</span>
+        </div>
+        
+        <div class="controls" id="controls-block" style="display:none;">
+            <button class="btn btn-clear" id="clear-cart">
+                <i class="fas fa-trash-alt"></i> Очистить корзину
+            </button>
+            <a href="straniza1.html" class="btn back-link">
+                <i class="fas fa-arrow-left"></i> Вернуться в каталог
+            </a>
+        </div>
+    </main>
+    <footer class="footer">
+        &copy; 2026 WatchHive Store — качественные товары с быстрой доставкой
+    </footer>
+    <script>
+        $(document).ready(function() {
+            function showNotification(message, type = 'success') {
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.innerHTML = `
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                    ${message}
+                `;
+                document.body.appendChild(notification);
+                setTimeout(() => notification.remove(), 3000);
+            }
+            var cartData = localStorage.getItem('myCart');
+            var $cartContainer = $('#cart-items');
+            var totalSum = 0;
+            var hasItems = false;
+            if (cartData) {
+                var items = JSON.parse(cartData);
+                if (items.length > 0) {
+                    hasItems = true;
+                    $.each(items, function(index, item) {
+                        var price = item.price || 0;
+                        var qty = item.qty || 1;
+                        var itemTotal = price * qty;
+                        totalSum += itemTotal;
+                        var formattedPrice = price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+                        var formattedTotal = itemTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+                        
+                        var html = `
+                            <div class="cart-item" data-index="${index}">
+                                <div class="item-info">
+                                    <div class="item-name">${item.name}</div>
+                                    <div class="item-price">${formattedPrice} ₽ за шт.</div>
+                                </div>
+                                <div class="item-qty">
+                                    <i class="fas fa-box"></i> ${qty} шт.
+                                </div>
+                                <div class="item-total">
+                                    <div class="item-total-label">Стоимость:</div>
+                                    <div class="item-total-value">${formattedTotal} ₽</div>
+                                </div>
+                            </div>
+                        `;
+                        $cartContainer.append(html);
+                    });
+                    var formattedTotalSum = totalSum.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+                    $('#total-sum').text(formattedTotalSum + ' ₽');
+                    $('#total-block').show();
+                    $('#controls-block').show();
+                }
+            }
+            if (!hasItems) {
+                $cartContainer.html(`
+                    <div class="empty-msg">
+                        <i class="fas fa-shopping-cart"></i>
+                        <p>Ваша корзина пуста</p>
+                        <p style="font-size: 0.9rem; color: #666;">
+                            <a href="straniza1.html">Перейти к покупкам</a>
+                        </p>
+                    </div>
+                `);
+            }
+            $('#clear-cart').click(function() {
+                if(confirm('Вы уверены, что хотите очистить корзину?')) {
+                    localStorage.removeItem('myCart');
+                    showNotification('Корзина очищена', 'success');
+                    setTimeout(() => {
+                        location.reload();
+                    }, 500);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

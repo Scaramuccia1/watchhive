@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width", initial-scale="1.0">
+        <title>Примеры фоновых стилей CSS</title>
+        <style>
+            body{
+                margin: 0;
+                font-family: Arial, Helvetica, sans-serif;
+            }
+            .header{
+                background-color: #4CAF50;
+                color: white;
+                padding: 20px;
+                text-align: center;
+            }
+            .banner{
+                background-image: url('C:\Users\apavl\Pictures\images (1).jpg');
+                background-size: cover;
+                background-position: center;
+                height: 300px;
+            }
+            .tile-background{
+                background-image: url('tile.jpg');
+                background-repeat: repeat;
+                height: 150px;
+            }
+            .no-repeat{
+                background-image: url('single-image.png');
+                background-repeat: no-repeat;
+                height: 150px;
+            }
+            .linear-gradient{
+                background-image: linear-gradient(to right, #4CAF50, #81C784);
+                height: 200px;
+            }
+            .radial-gradient{
+                background-image: radial-gradient(circle, #ff5722, #ffeb3b);
+                height: 200px;
+            }
+            .combined-background{
+                background-color: rgba(255, 255, 255, 0.8);
+                background-image: url('overlapping-image.png');
+                background-repeat: no-repeat;
+                background-position: center;
+                background-size: cover;
+                height: 300px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="header">Заголовок</div>
+        <div class="banner"></div>
+        <div class="tile-background"></div>
+        <div class="no-repeat"></div>
+        <div class="partial-background"></div>
+        <div class="linear-gradient"></div>
+        <div class="radial-gradient"></div>
+        <div class="combined-background"></div>
+    </body>

@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Магазин</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #1a1a1f;
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            padding: 30px 20px;
+            margin-bottom: 30px;
+            background: rgba(35, 35, 43, 0.8);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .header h1 {
+            font-size: 2rem;
+            background: linear-gradient(90deg, #648cdc, #8e2de2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .header p {
+            color: #888;
+            font-size: 0.95rem;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+            padding: 0 10px;
+        }
+        .product-card {
+            background: #23232b;
+            border-radius: 16px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            flex-direction: column;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(100, 140, 220, 0.2);
+            border-color: rgba(100, 140, 220, 0.3);
+        }
+        .product-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            background: #1a1a1f;
+            display: block;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .product-content {
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .product-name {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #fff;
+            line-height: 1.4;
+        }
+        .product-price {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #648cdc;
+            margin-bottom: 10px;
+        }
+        .product-stock {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 15px;
+        }
+        .stock-badge {
+            background: rgba(40, 167, 69, 0.2);
+            color: #28a745;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+        .stock-badge.low {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+        }
+        .stock-badge.out {
+            background: rgba(220, 53, 69, 0.2);
+            color: #dc3545;
+        }
+        .add-btn {
+            margin-top: auto;
+            background: linear-gradient(90deg, #648cdc, #4a6bb8);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .add-btn:hover:not(:disabled) {
+            background: linear-gradient(90deg, #7a9cd6, #5a7bc0);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(100, 140, 220, 0.4);
+        }
+        .add-btn:disabled {
+            background: #3a3a4a;
+            color: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .add-btn i { 
+            font-size: 0.9rem; 
+        }
+        .cart-section {
+            text-align: center;
+            padding: 20px;
+            background: rgba(35, 35, 43, 0.8);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 30px;
+        }
+        .cart-btn {
+            background: linear-gradient(90deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+        .cart-btn:hover {
+            background: linear-gradient(90deg, #218838, #1e9e77);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(40, 167, 69, 0.4);
+        }
+        .cart-btn i { 
+            font-size: 1.1rem; 
+        }
+        @keyframes slideIn {
+            from { transform: translateX(200px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; } to { opacity: 0; }
+        }
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4a4a5a;
+            color: white;
+            padding: 14px 25px;
+            border-radius: 50px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            z-index: 9999;
+            animation: slideIn 0.3s ease forwards, fadeOut 0.4s ease 2.6s forwards;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+        .notification.success { 
+            background: linear-gradient(90deg, #28a745, #20c997); 
+        }
+        .notification.error { 
+            background: linear-gradient(90deg, #dc3545, #c82333); 
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: rgba(255,255,255,0.5);
+            font-size: 0.85rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            margin-top: 20px;
+        }
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                gap: 20px;
+            }
+            .header h1 { font-size: 1.6rem; }
+            .product-price { font-size: 1.25rem; }
+            .cart-btn { padding: 12px 30px; font-size: 1rem; }
+        }
+        @media (max-width: 480px) {
+            .container {
+                grid-template-columns: 1fr;
+                max-width: 350px;
+                margin: 0 auto;
+            }
+            .header { padding: 20px 15px; }
+            .header h1 { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1><i class="fas fa-shopping-bag"></i> WatchHive Store</h1>
+        <p>Электроника и аксессуары премиум-класса</p>
+    </header>
+    <main class="container">
+        <div class="product-card" id="card-1">
+            <img src="https://tse2.mm.bing.net/th/id/OIP.1F6ecX9KbMk7GQ1_axIiEgHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" 
+                 alt="Смартфон Айфон 17pro" class="product-image">
+            <div class="product-content">
+                <h3 class="product-name">Смартфон Айфон 17pro</h3>
+                <div class="product-price">179 631 ₽</div>
+                <div class="product-stock">
+                    <i class="fas fa-box"></i>
+                    В наличии: <span class="stock-badge" id="qty-1">7 шт.</span>
+                </div>
+                <button class="add-btn" data-id="1">
+                    <i class="fas fa-cart-plus"></i> В корзину
+                </button>
+            </div>
+        </div>
+        <div class="product-card" id="card-2">
+            <img src="https://th.bing.com/th/id/R.94851163e66e43d75cfa9a1549ab22b8?rik=c%2bSXP7SoXqz0lg&pid=ImgRaw&r=0" 
+                 alt="Ноутбук Apple Pro" class="product-image">
+            <div class="product-content">
+                <h3 class="product-name">Ноутбук Apple Pro</h3>
+                <div class="product-price">85 000 ₽</div>
+                <div class="product-stock">
+                    <i class="fas fa-box"></i>
+                    В наличии: <span class="stock-badge" id="qty-2">6 шт.</span>
+                </div>
+                <button class="add-btn" data-id="2">
+                    <i class="fas fa-cart-plus"></i> В корзину
+                </button>
+            </div>
+        </div>
+        <div class="product-card" id="card-3">
+            <img src="https://tse3.mm.bing.net/th/id/OIP.s0YIxKosyODhLEkVG14StAHaIF?rs=1&pid=ImgDetMain&o=7&rm=3" 
+                 alt="Наушники G737" class="product-image">
+            <div class="product-content">
+                <h3 class="product-name">Наушники G737</h3>
+                <div class="product-price">4 679 ₽</div>
+                <div class="product-stock">
+                    <i class="fas fa-box"></i>
+                    В наличии: <span class="stock-badge low" id="qty-3">4 шт.</span>
+                </div>
+                <button class="add-btn" data-id="3">
+                    <i class="fas fa-cart-plus"></i> В корзину
+                </button>
+            </div>
+        </div>
+
+    </main>
+    <section class="cart-section">
+        <a href="straniza2.html" class="cart-btn">
+            <i class="fas fa-shopping-cart"></i> Перейти в корзину
+        </a>
+    </section>
+    <footer class="footer">
+        &copy; 2026 WatchHive Store — качественные товары с быстрой доставкой
+    </footer>
+
+    <script>
+        $(document).ready(function() {
+            function showNotification(message, type = 'success') {
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.innerHTML = `
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                    ${message}
+                `;
+                document.body.appendChild(notification);
+                setTimeout(() => notification.remove(), 3000);
+            }
+            $('.add-btn').click(function() {
+                const $card = $(this).closest('.product-card');
+                const productId = $(this).data('id');
+                const productName = $card.find('.product-name').text().trim();
+                const $qtyElement = $card.find('.stock-badge');
+                let currentQty = parseInt($qtyElement.text());
+                const priceText = $card.find('.product-price').text();
+                const priceValue = parseFloat(priceText.replace(/[^0-9.]/g, ''));
+                if (currentQty > 0) {
+                    let cart = JSON.parse(localStorage.getItem('myCart')) || [];
+                    let foundItem = false;
+                    $.each(cart, function(index, item) {
+                        if (item.id == productId) {
+                            item.qty = item.qty + 1;
+                            foundItem = true;
+                            return false;
+                        }
+                    });
+                    if (!foundItem) {
+                        cart.push({
+                            id: productId,
+                            name: productName,
+                            qty: 1,
+                            price: priceValue
+                        });
+                    }
+                    localStorage.setItem('myCart', JSON.stringify(cart));
+                    currentQty--;
+                    $qtyElement.text(currentQty + ' шт.');
+                    if (currentQty <= 2) {
+                        $qtyElement.removeClass('low out').addClass('low');
+                    }
+                    if (currentQty === 0) {
+                        $qtyElement.removeClass('low').addClass('out');
+                        $(this).prop('disabled', true).html('<i class="fas fa-times"></i> Нет в наличии');
+                    }
+                    showNotification(`"${productName}" добавлен в корзину!`, 'success');
+
+                } else {
+                    showNotification(`"${productName}" закончился!`, 'error');
+                }
+            });
+            $('.product-card').each(function() {
+                const $card = $(this);
+                const qty = parseInt($card.find('.stock-badge').text());
+                const $btn = $card.find('.add-btn');
+                
+                if (qty === 0) {
+                    $btn.prop('disabled', true)
+                        .html('<i class="fas fa-times"></i> Нет в наличии')
+                        .css('background', '#3a3a4a');
+                    $card.find('.stock-badge').addClass('out');
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

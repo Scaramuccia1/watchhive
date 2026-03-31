@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Примеры фоновых стилей CSS</title>
+    <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=30u_13zrz6U9AsVg4x-h0WmoaHYoK43JELtVT5_8qx74Pdh_txP5WdGJ0xmXzDbOF9YLEZzFeTnQhfSddtnDjS6eduA2b9dfD6hoTtGGJLp_elW6L0oDMs3iyvBLjoxQvE1r36GL7ce1oUrR6O5IpduOE80fHJY8KkuKRcN9EYmeMu1toTYTQ8ooBDcuZSeeNmPdmRMUU3PsJ3azI_jb2fSFCFwpcOQWTwBEW8CJz4o1zwpBpQilJSNHBXbrIOtnEdTG4jMtDGWicbqQXv1CLtSAPyXcayRvKpHNz112XkJDHRbnohH3_87vbciUAu62d-6QcxR8F2c-AcRIWGfu3pSBkg3Sm-sgvFrzoEqwnQgTYnaoNOMlrWuhlHOywnGeZZMiZ49i_IK0wBpmw0Oonq6pnxgJBdU-s4pwyQr1-F4yNyB3wy9v65tcrB2mAnQM5EepijhC7vKRIDP6pEinV_aNFVBoh2SllO2vReQaVLKguAibOS8b_NYBNN7bxh9_RBqfz0LqtZ-BMVb7ejI_VQ-V-7_sTLtHLz0hZk5wQK2NOUobV-uoDMW_KmrFhvp_xmb2htzpcMvdMmU0OaBP0k5YDUv0-AwrdP-Jyez1-9kGvygMAlnSLUaDykVKoyO0hzKoPNZhY5wbA--ujAk8YnoE2jQtlF9jT7HfH0-TR0eoS21tZYYZdU0RaPs71FP4eCtAATK8aCLR__uK3eF43d0KxDxXakrewH7WDk6A1zoh1JiJ3ObagD8Wvasygqvb9xw9MEAHsJE6IheRepmFCf_Zu4TH0MFJ-Ia1b5AHqF0UbmFwzwsp9bhKzi9OQOoQ40sE3Ypb1Mibm07-E8zpUA" charset="UTF-8"></script><style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f5f5f5;
+}
+
+.combo-background {
+    background-image: url('https://bakoomwak.ru/works/2021plus/2.png'); 
+    background-color: #333;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+    height: 400px;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.title {
+    position: relative;
+    font-size: 24px;
+    margin: 20px 0;
+}
+
+.title::before {
+    content: "⚡ "; /* Иконка перед заголовком */
+    color: gold;
+}
+
+.title::after {
+    content: " (Новая)"; /* Текст после заголовка */
+    color: red;
+}
+
+.fixed-background {
+    background-image: url('https://bakoomwak.ru/works/2021plus/2.png');
+    background-size: cover;
+    height: 300px;
+    padding: 20px;
+}
+
+.size-background {
+    background-image: url('https://bakoomwak.ru/works/2021plus/2.png'); 
+    background-size: contain;
+    height: 300px;
+}
+
+.origin-background {
+    background-image: url('https://bakoomwak.ru/works/2021plus/2.png'); 
+    height: 300px;
+    padding: 20px;
+}
+</style>
+</head>
+<body>
+    <div class="combo-background">Это пример фона с множественными свойствами.</div>
+    <h1 class="title">Пример заголовка с псевдоэлементами</h1>
+    <div class="fixed-background">Фон с фиксацией при прокрутке.</div>
+    <div class="size-background">Фон, который полностью покрывает блок.</div>
+    <div class="origin-background">Фон с определением области.</div>
+</body>
+</html>

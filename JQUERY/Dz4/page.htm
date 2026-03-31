@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Форма с валидацией</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 500px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+    label {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    input {
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .error {
+      color: red;
+      font-size: 12px;
+      margin-top: 3px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    hr {
+      margin: 15px 0;
+      border: none;
+      border-top: 1px solid #eee;
+    }
+  </style>
+</head>
+<body>
+<form id="myForm">
+  <label for="name">Имя</label>
+  <input type="text" id="name" name="name" required>
+  <span class="error" id="nameError"></span>
+  <hr>
+  <label for="email">Почта</label>
+  <input type="email" id="email" name="email" required>
+  <span class="error" id="emailError"></span>
+  <hr>
+  <label for="phone">Номер</label>
+  <input type="text" id="phone" name="phone" required>
+  <span class="error" id="phoneError"></span>
+  <hr>
+  <label for="password">Пароль</label>
+  <input type="password" id="password" name="password" required>
+  <span class="error" id="passwordError"></span>
+  <hr>
+  <label for="age">Возраст</label>
+  <input type="number" min="1" max="120" id="age" name="age" required>
+  <span class="error" id="ageError"></span>
+  <button type="submit">Отправить</button>
+</form>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#age").on("drop paste", function(e){
+    e.preventDefault();
+  });
+  $("#age").on("keypress", function(e){
+    if(e.key === "-" || (e.key === "0" && $(this).val() === "")){
+      e.preventDefault();
+      $(this).val(1);
+      return false;
+    }
+    const currentVal = $(this).val();
+    const newVal = currentVal + e.key;
+    if(currentVal !== "" && (parseInt(currentVal) > 120 || parseInt(newVal) > 120)){
+      e.preventDefault();
+      $(this).val(120);
+      return false;
+    }
+  });
+  function validatePassword(pwd) {
+    const errors = [];
+    if (pwd.length < 6) {
+      errors.push("Минимальная длина пароля — 6 символов");
+    }
+    if (pwd.length > 30) {
+      errors.push("Максимальная длина пароля — 30 символов");
+    }
+    if (!/[a-z]/.test(pwd)) {
+      errors.push("Пароль должен содержать хотя бы одну строчную букву (a-z)");
+    }
+    if (!/[A-Z]/.test(pwd)) {
+      errors.push("Пароль должен содержать хотя бы одну заглавную букву (A-Z)");
+    }
+    if (!/[0-9]/.test(pwd)) {
+      errors.push("Пароль должен содержать хотя бы одну цифру (0-9)");
+    }
+    if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~]/.test(pwd)) {
+      errors.push("Пароль должен содержать хотя бы один спецсимвол (!@#$%^&* и др.)");
+    }
+    if (/[^a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~\s]/.test(pwd)) {
+      errors.push("Пароль может содержать только английские буквы, цифры и спецсимволы");
+    }
+    return errors;
+  }
+  $("#myForm").on("submit", function(e){
+    e.preventDefault();
+    
+    let isValid = true;
+    $(".error").text("");
+    const name = $("#name").val().trim();
+    if(!name){
+      $("#nameError").text("Введите имя");
+      isValid = false;
+    }
+    const email = $("#email").val().trim();
+    const emailPattern = /^[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if(!email){
+      $("#emailError").text("Введите вашу почту");
+      isValid = false;
+    } else if (!emailPattern.test(email)){
+      $("#emailError").text("Некорректный формат почты");
+      isValid = false;
+    }
+    const phone = $("#phone").val().trim();
+    const phonePattern = /^\+?\d{10,15}$/;
+    if(!phone){
+      $("#phoneError").text("Введите номер телефона");
+      isValid = false;
+    } else if (!phonePattern.test(phone)){
+      $("#phoneError").text("Номер должен содержать от 10 до 15 цифр");
+      isValid = false;
+    }
+    const password = $("#password").val();
+    if(!password){
+      $("#passwordError").text("Введите пароль");
+      isValid = false;
+    } else {
+      const pwdErrors = validatePassword(password);
+      if(pwdErrors.length > 0){
+        $("#passwordError").html(pwdErrors.join("<br>"));
+        isValid = false;
+      }
+    }
+    const age = $("#age").val();
+    if(!age){
+      $("#ageError").text("Введите возраст");
+      isValid = false;
+    } else if(age < 1 || age > 120){      
+      $("#ageError").text("Допустимый возраст: от 1 до 120 лет");
+      isValid = false;
+    }
+    if(isValid){
+      alert("✅ Все поля заполнены корректно!");
+    }
+  });
+  $("#password").on("input", function(){
+    const pwd = $(this).val();
+    if(pwd.length > 0){
+      const errors = validatePassword(pwd);
+      $("#passwordError").text(errors.length > 0 ? errors[0] : "");
+    } else {
+      $("#passwordError").text("");
+    }
+  });
+});
+</script>
+
+</body>
+</html>

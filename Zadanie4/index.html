@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width", initial-scale="1.0">
+        <title>Примеры списков в HTML</title>
+        <style>
+            body{
+                font-family: Arial, Helvetica, sans-serif;
+                background-color: #f5f5f5;
+                margin: 0;
+                padding: 20px;
+            }
+            h1{
+                text-align: center;
+            }
+            h2{
+                margin-top: 20px;
+                color: #333;
+            }
+            ul, ol{
+                margin: 10px 0;
+                padding: 0 20px;
+            }
+            .checkbox-list{
+                list-style-type: none;
+            }
+            .checkbox-list li{
+                margin-bottom: 10px;
+            }
+            dl{
+                margin: 10px 0;
+            }
+            dt{
+                font-weight: bold;
+                margin-top: 10px;
+            }
+            dd{
+                margin-left: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Примеры HTML-элементов списков</h1>
+        <h2>1. Ненумерованный список</h2>
+        <ul1>
+            <li>Первый элемент</li>
+            <li>Второй элемент</li>
+            <li>Третий элемент</li>
+        </ul1>
+        <h2>2.Нумерованный список</h2>
+        <ol>
+            <li>Первый элемент</li>
+            <li>Второй элемент</li>
+            <li>Третий элемент</li>
+        </ol>
+        <h2>3. Список с вложенными элементами</h2>
+        <ul>
+            <li>Основной элемент
+                <ul>
+                    <li>Вложенный элемент 1</li>
+                    <li>Вложенный элемент 2</li>
+                </ul>
+            </li>
+            <li>Другой основной элемент</li>
+        </ul>
+        <h2>4. Список с чекбоксами</h2>
+        <ul class="checkbox-list">
+            <li>
+                <input type="checkbox" id="item1">
+                <label for="item1">Задача 1</label>
+            </li>
+            <li>
+                <input type="checkbox" id="item2">
+                <label for="item2">Задача 2</label>
+            </li>
+            <li>
+                <input type="checkbox" id="item3">
+                <label for="item3">Задача 3</label>
+            </li>
+        </ul>
+        <h2>5. Список определений</h2>
+        <dl>
+            <dt>HTML</dt>
+            <dd>Язык разметки для создания веб-страниц</dd>
+            <dt>CSS</dt>
+            <dd>Язык стилевой разметки для оформления веб-страниц</dd>
+            <dt>JavaScript</dt>
+            <dd>Язык программирования, используемый для создания интерактивного контента на веб-страницах.</dd>
+        </dl>
+    </body>
+</html>

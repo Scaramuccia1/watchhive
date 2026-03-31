@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Пример селекторов CSS</title>
+    <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=tSF2GKRA1iOY6jERkI7_m5MmOOO73n1NUJR0j8c9GEyqDbrV786v_rhh6s9kD-t2Pwpa_HThK8vuT2UV0m7ez3Pv_6J8Q4faSq0UPXnCT-lS5CXvhoo-kMl-IxKCPOT5D2Mg3RKg6qid_YF8wmw7VNmr9--jzAd_rprNU2mOrBYGBOkVQ_qPFxewVFSvOsve4dl0wltTtDvGTtFD4mARG0VMmaPVqVbjGE2TAoIC5FFcDhUGW2dVbAr_m-AvsVftXAHYjKJmKZKBOg0hJYvAYVCq-k6i_oYqIQM1GmWT9-I7pkyvFZq1-92upXdlOR0qbryTEwM5r6iwbLT63U8ZE0QG9OmPhsQLSkXOrM3sRwjZcc9ANHjiVGPYi7bk-A9BNmhmbTa-9srn9TNMUn9pnio6IQ0n29Xb74qJL4B-P4kM-_8VZKJvOLQR7AYIkJ84uu9kqM1x0Cd-971xRS3F4E2rqYMKfsqmYgJYtcycFKnNdxZtUh0ldsDbWSwoNcHxJptm_jydTcoCgfCKYvBaKzYj2L87_VLGGcnxPI-dVDl7p3ALJjGYf4hpBNk_zaWap6V1N83pc6ZDpj77tbXd0eOLgfxhuCWnUbtjJewyo9HAjd57L9Qk-2Dg9XXTCV6kJdR6TMh2ngmX3vycluf8QXSu45RwK7Vr-PVzKhoVhxGTfg8oJpi-dgt9F7NGeomszoaMqjAMRuYw1a3eP_u5qZriy6_IbkIXQaAHfoo53qScfvtWrQY2etpRB7MQiU9O43WPFsTv73ewRbo0CIhDe_-O_WO618Bq6p_65Itb_2mGPvhA3KWmXyn_EoQqO02oahA0XczXbc4YW8cK-80ATA" charset="UTF-8"></script><style>
+/* Селектор по тегу */
+h1 {
+    color: blue; /* Заголовок будет синего цвета */
+}
+
+/* Селектор по классу */
+.alert {
+    background-color: yellow; /* Фон для уведомления будет жёлтым */
+    padding: 15px;
+    border: 1px solid orange; /* Оранжевая рамка */
+}
+
+/* Селектор по ID */
+#header {
+    text-align: center; /* Центрируем текст в заголовке */
+}
+
+/* Селектор по атрибуту */
+input[type="text"] {
+    border: 1px solid green; /* Зелёная граница для текстового поля */
+    padding: 10px;
+    margin-bottom: 10px; /* Отступ снизу для текстового поля */
+}
+
+/* Селектор следующего элемента */
+h2 + p {
+    margin-top: 10px; /* Отступ для абзаца, следующего за h2 */
+}
+
+/* Селектор вложенных элементов */
+div p {
+    color: red; /* Все абзацы внутри любой div будут красного цвета */
+}
+
+/* Селектор по классу для задач */
+.task {
+    font-weight: bold; /* Жирный текст для задач */
+    cursor: pointer; /* Указатель при наведении */
+}
+
+.task:hover {
+    color: purple; /* При наведении цвет текста будет пурпурным */
+}
+</style>
+</head>
+<body>
+    <header id="header">
+        <h1>Пример работы с селекторами CSS</h1>
+    </header>
+    <div class="alert">
+        <p>Это уведомление о важной информации!</p>
+    </div>
+    <div>
+        <h2>Список задач</h2>
+        <ul>
+            <li class="task">Задача 1</li>
+            <li class="task">Задача 2</li>
+            <li class="task">Задача 3</li>
+        </ul>
+        <p>Все задачи выполнены.</p>
+    </div>
+    <div>
+        <input type="text" placeholder="Введите текст...">
+        <input type="checkbox" id="checkbox">
+        <label for="checkbox">Установить задачу как выполненную</label>
+    </div>
+</body>
+</html>

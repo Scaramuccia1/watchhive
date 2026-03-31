@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Cookies</title>
+</head>
+<body>
+    <h1>Работа с Cookies</h1>
+    <input type="text" id="usernameInput" placeholder="Ваше имя" />
+    <button id="saveButton">Сохранить</button>
+    <button id="loadButton">Загрузить</button>
+    <button id="clearButton">Очистить</button>
+    <h2 id="greeting"></h2>
+    <script>
+        function setCookie(name, value, days) {
+            let expires = days ? "; expires=" + new Date(Date.now() + days*864e5).toUTCString() : "";
+            document.cookie = name + "=" + value + expires + "; path=/";
+        }
+        function getCookie(name) {
+            let c = document.cookie.split(';').find(r => r.trim().startsWith(name + '='));
+            return c ? c.split('=')[1] : null;
+        }
+        document.getElementById('saveButton').onclick = () => {
+            let val = document.getElementById('usernameInput').value;
+            setCookie("username", val, 7);
+            alert("Сохранено: " + val);
+        };
+        document.getElementById('loadButton').onclick = () => {
+            let val = getCookie("username");
+            if (val) {
+                document.getElementById('greeting').innerText = val;
+                alert("Загружено из cookie: " + val);
+            } else {
+                alert("Cookie не найдена");
+            }
+        };
+        document.getElementById('clearButton').onclick = () => {
+            setCookie("username", "", -1);
+            document.getElementById('greeting').innerText = "";
+            alert("Cookie очищена");
+        };
+    </script>
+</body>
+</html>

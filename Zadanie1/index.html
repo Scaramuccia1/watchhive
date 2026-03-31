@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width", initial="1.0">
+        <title>Работа с медиа-элементами</title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <div class="container">
+            <h1>Пример работы с медиа-элементами</h1>
+            <h2>Изображение</h2>
+            <img src="example.jpg" alt="Пример Изображения" class="media-image">
+            <h2>Аудиофайл</h2>
+            <audio controls class="media-audio">
+                <source src="examole.mp3" type="audio/mpeg">
+                Ваш браузер не поддерживает аудиофайлы.
+            </audio>
+            <h2>Видеофайл</h2>
+            <video controls class="media-video">
+                <source src="examole.mp4" type="video/mp4">
+                Ваш браузер не поддерживает видео.
+            </video>
+            <iframe width="720" height="405" src="https://rutube.ru/play/embed/55fe466d757130fb4a34d9f39c589c01/" 
+            style="border: none;" allow="clipboard-write; autoplay" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+        </div>
+    </body>
+</html>

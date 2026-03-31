@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Выпадающее меню</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .header {
+            background-color: white;
+            padding: 10px 0;
+            position: relative;
+        }
+        nav ul {
+            list-style-type: none;
+            display: flex;
+            background-color: white;
+            margin: 0;
+            padding: 0 20px;
+        }
+        nav ul li {
+            position: relative;
+        }
+        nav ul li a {
+            display: block;
+            color: black;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        nav ul li a:hover {
+            background-color: #f5f5f5;
+        }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-toggle {
+            background-color: transparent;
+            color: black;
+            padding: 14px 16px;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 180px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 100;
+            top: 100%;
+            left: 0;
+            margin-top: 2px;
+        }
+        .dropdown-content li {
+            position: relative;
+        }
+        .dropdown-content a {
+            color: #333;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.3s;
+        }
+        .dropdown-content a:hover {
+            background-color: #e0e0e0;
+            color: #000;
+        }
+        .dropdown-content .dropdown-content {
+            top: 0;
+            left: 100%;
+            margin-top: 0;
+        }
+        .dropdown:hover > .dropdown-content,
+        .dropdown-content > li:hover > .dropdown-content,
+        .dropdown-content > li > .dropdown-content > li:hover > .dropdown-content {
+            display: block;
+        }
+        .dropdown > a:after {
+            content: " ▾";
+            font-size: 0.7em;
+            margin-left: 5px;
+        }
+        .dropdown-content > li > .dropdown-toggle:after {
+            content: " ▸";
+            font-size: 0.7em;
+            margin-left: 5px;
+        }
+    </style>
+</head> 
+<body>
+    <header class="header">
+        <nav>
+            <ul>
+                <li><a href="#">Главная</a></li>
+                <li><a href="#">О нас</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle">Проекты</a>
+                    <ul class="dropdown-content">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle">IT проекты</a>
+                            <ul class="dropdown-content">
+                                <li><a href="#">Онлайн-игры</a></li>
+                                <li><a href="#">Мобильные игры</a></li>
+                                <li><a href="#">Приложения</a></li>
+                                <li><a href="#">В разработке...</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle">Анимация</a>
+                            <ul class="dropdown-content">
+                                <li><a href="#">Короткий метр</a></li>
+                                <li><a href="#">Сериалы</a></li>
+                                <li><a href="#">Трейлеры</a></li>
+                                <li><a href="#">В разработке...</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle">Медиапространство</a>
+                    <ul class="dropdown-content">
+                        <li><a href="#">Конференции</a></li>
+                        <li><a href="#">Вебинары</a></li>
+                        <li><a href="#">Анонсы</a></li>
+                        <li><a href="#">Премии</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">Контакты</a></li>
+                <li><a href="#">Вакансии</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle">Статьи</a>
+                    <ul class="dropdown-content">
+                        <li><a href="#">Обучение</a></li>
+                        <li><a href="#">Аналитика</a></li>
+                    </ul>
+                </li>
+                
+                <li><a href="#">Обратная связь</a></li>
+            </ul>
+        </nav>
+    </header>
+</body>
+</html>
