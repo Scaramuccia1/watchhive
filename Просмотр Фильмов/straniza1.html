@@ -1,1488 +1,222 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>WatchHive | Фильмы, Сериалы, Дорамы</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<!-- Google Identity Services -->
-<script src="https://accounts.google.com/gsi/client" async defer></script>
-<!-- VK SDK -->
-<script src="https://vk.com/js/api/openapi.js?169" type="text/javascript"></script>
-<!-- Disqus Embed -->
-<script id="disqus-thread-script" async src="https://watchhive.disqus.com/embed.js"></script>
-<style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-font-family: 'Poppins', sans-serif;
-background: #1a1a1f;
-color: #fff;
-min-height: 100vh;
-display: flex;
-flex-direction: column;
-}
-/* ===== TOP SEARCH BAR ===== */
-.top-search-bar {
-position: fixed; top: 0; left: 0; right: 0;
-background: rgba(26, 26, 31, 0.98);
-backdrop-filter: blur(10px);
-padding: 15px 30px; z-index: 1000;
-border-bottom: 1px solid #333;
-display: flex; align-items: center; justify-content: center; gap: 15px;
-}
-.search-container { position: relative; width: 100%; max-width: 600px; }
-.search-input {
-width: 100%; padding: 12px 45px 12px 20px;
-background: #2a2a35; border: 2px solid #3a3a4a;
-border-radius: 50px; color: #fff; font-size: 1rem;
-font-family: 'Poppins', sans-serif; outline: none;
-transition: all 0.3s ease;
-}
-.search-input:focus {
-border-color: #648cdc; background: #323240;
-box-shadow: 0 0 0 3px rgba(100, 140, 220, 0.1);
-}
-.search-input::placeholder { color: #666; }
-.search-btn {
-position: absolute; right: 5px; top: 50%;
-transform: translateY(-50%);
-background: #4a4a5a; border: none; color: #fff;
-width: 36px; height: 36px; border-radius: 50%;
-cursor: pointer; transition: all 0.2s;
-display: flex; align-items: center; justify-content: center;
-}
-.search-btn:hover {
-background: #648cdc; transform: translateY(-50%) scale(1.05);
-}
-.clear-search {
-position: absolute; right: 48px; top: 50%;
-transform: translateY(-50%);
-background: transparent; border: none; color: #888;
-cursor: pointer; padding: 5px 8px; border-radius: 50%;
-transition: all 0.2s; display: none;
-}
-.clear-search:hover { background: rgba(255,255,255,0.1); color: #fff; }
-.clear-search.visible { display: block; }
-.search-results {
-position: absolute; top: 100%; left: 0; right: 0;
-margin-top: 10px; background: #23232b;
-border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-max-height: 500px; overflow-y: auto; display: none;
-z-index: 1001; border: 1px solid #333;
-}
-.search-results.show { display: block; animation: slideDown 0.2s ease; }
-@keyframes slideDown {
-from { opacity: 0; transform: translateY(-10px); }
-to { opacity: 1; transform: translateY(0); }
-}
-.search-results::-webkit-scrollbar { width: 6px; }
-.search-results::-webkit-scrollbar-track { background: #1a1a1f; border-radius: 0 12px 12px 0; }
-.search-results::-webkit-scrollbar-thumb { background: #4a4a5a; border-radius: 3px; }
-.search-result-item {
-padding: 12px 15px; display: flex; align-items: center; gap: 12px;
-cursor: pointer; transition: background 0.2s;
-border-bottom: 1px solid rgba(255,255,255,0.05);
-}
-.search-result-item:last-child { border-bottom: none; border-radius: 0 0 12px 12px; }
-.search-result-item:first-child { border-radius: 12px 12px 0 0; }
-.search-result-item:hover { background: rgba(100, 140, 220, 0.15); }
-.search-result-item img {
-width: 40px; height: 60px; object-fit: cover;
-border-radius: 4px; background: #333;
-}
-.search-result-info { flex: 1; min-width: 0; }
-.search-result-title {
-font-weight: 500; color: #fff; margin-bottom: 3px;
-white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.search-result-meta { font-size: 0.8rem; color: #888; }
-.search-no-results, .search-loading { padding: 30px 20px; text-align: center; color: #888; }
-.search-loading i { animation: spin 1s linear infinite; margin-right: 8px; }
-@keyframes spin { to { transform: rotate(360deg); } }
-/* ===== SIDEBAR ===== */
-.sidebar {
-width: 280px; background: #23232b; padding: 25px 20px;
-position: fixed; left: 0; top: 71px; bottom: 0;
-overflow-y: auto; border-right: 1px solid #333; z-index: 100;
-display: flex; flex-direction: column; gap: 20px;
-}
-.sidebar-header {
-text-align: center; padding-bottom: 15px;
-border-bottom: 1px solid #333;
-}
-.sidebar-header h1 { font-size: 1.8rem; color: #fff; letter-spacing: 1px; }
-.sidebar-section { display: flex; flex-direction: column; gap: 10px; }
-.sidebar-section h3 {
-font-size: 0.9rem; color: #888; text-transform: uppercase;
-letter-spacing: 0.5px; font-weight: 600;
-display: flex; align-items: center; justify-content: space-between;
-}
-.sidebar-section h3 i { margin-right: 8px; }
-.sidebar-nav ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
-.sidebar-nav a {
-color: rgba(255,255,255,0.85); text-decoration: none;
-padding: 10px 14px; background: rgba(255,255,255,0.05);
-border-radius: 8px; transition: all 0.2s; font-weight: 500;
-font-size: 0.9rem; display: flex; align-items: center; justify-content: space-between;
-}
-.sidebar-nav a:hover, .sidebar-nav a.active { background: #4a4a5a; color: #fff; }
-.sidebar-nav a i { width: 18px; text-align: center; }
-.badge-count {
-background: #648cdc; color: #fff; font-size: 0.7rem;
-padding: 2px 6px; border-radius: 10px;
-min-width: 20px; text-align: center;
-}
-.type-buttons { display: flex; flex-direction: column; gap: 6px; }
-.type-btn {
-padding: 9px 14px; background: rgba(255,255,255,0.05);
-color: rgba(255,255,255,0.85); border: none; border-radius: 8px;
-cursor: pointer; transition: all 0.2s; font-size: 0.9rem;
-text-align: left; display: flex; align-items: center; gap: 10px; font-weight: 500;
-}
-.type-btn:hover, .type-btn.active { background: #4a4a5a; color: #fff; }
-.type-btn i { width: 18px; text-align: center; }
-.genre-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-.clear-genres-btn {
-background: rgba(200,50,50,0.2); color: #ff8080; border: none;
-padding: 4px 10px; border-radius: 6px; font-size: 0.75rem;
-cursor: pointer; transition: all 0.2s; display: none;
-}
-.clear-genres-btn:hover { background: rgba(200,50,50,0.4); color: #fff; }
-.clear-genres-btn.visible { display: inline-flex; align-items: center; gap: 4px; }
-.genre-buttons {
-display: flex; flex-direction: column; gap: 5px;
-max-height: 280px; overflow-y: auto; padding-right: 4px;
-}
-.genre-buttons::-webkit-scrollbar { width: 4px; }
-.genre-buttons::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 2px; }
-.genre-buttons::-webkit-scrollbar-thumb { background: #555; border-radius: 2px; }
-.genre-btn {
-padding: 7px 12px; background: rgba(255,255,255,0.05);
-color: rgba(255,255,255,0.75); border: 1px solid transparent;
-border-radius: 6px; cursor: pointer; transition: all 0.2s;
-font-size: 0.85rem; text-align: left;
-display: flex; align-items: center; justify-content: space-between;
-}
-.genre-btn:hover { background: rgba(100,100,120,0.3); color: #fff; }
-.genre-btn.selected {
-background: rgba(100,140,220,0.25); border-color: #648cdc;
-color: #fff; font-weight: 500;
-}
-.genre-btn.selected::after { content: '✓'; color: #648cdc; font-weight: bold; }
-.selected-count {
-font-size: 0.75rem; color: #648cdc;
-background: rgba(100,140,220,0.15); padding: 2px 8px;
-border-radius: 10px; margin-left: 8px;
-}
-/* ===== AUTH BUTTONS ===== */
-.auth-buttons {
-display: flex;
-flex-direction: column;
-gap: 10px;
-margin-top: 5px;
-}
-.oauth-btn {
-display: flex;
-align-items: center;
-justify-content: center;
-gap: 10px;
-padding: 10px 16px;
-border: none;
-border-radius: 10px;
-font-size: 0.9rem;
-font-weight: 500;
-cursor: pointer;
-transition: all 0.2s ease;
-color: #fff;
-text-decoration: none;
-}
-.oauth-btn.google {
-background: #fff;
-color: #333;
-border: 1px solid #ddd;
-}
-.oauth-btn.google:hover {
-background: #f8f8f8;
-box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-.oauth-btn.google i { color: #4285f4; font-size: 1.1rem; }
-.oauth-btn.vk {
-background: #0077ff;
-}
-.oauth-btn.vk:hover {
-background: #0066e0;
-box-shadow: 0 4px 12px rgba(0, 119, 255, 0.4);
-}
-.oauth-btn.vk i { font-size: 1.1rem; }
-.oauth-btn:disabled {
-opacity: 0.6;
-cursor: not-allowed;
-transform: none !important;
-}
-.oauth-divider {
-text-align: center;
-color: #666;
-font-size: 0.8rem;
-margin: 8px 0;
-position: relative;
-}
-.oauth-divider::before,
-.oauth-divider::after {
-content: '';
-position: absolute;
-top: 50%;
-width: 35%;
-height: 1px;
-background: #444;
-}
-.oauth-divider::before { left: 0; }
-.oauth-divider::after { right: 0; }
-/* ===== MAIN CONTENT ===== */
-.main-content {
-margin-left: 280px;
-padding: 115px 40px 30px;
-flex: 1;
-min-height: 100vh;
-}
-.page-header {
-margin-bottom: 25px;
-display: flex; align-items: center; justify-content: space-between;
-flex-wrap: wrap; gap: 15px;
-}
-.page-header h2 { font-size: 1.8rem; color: #fff; }
-.active-filters { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.filter-tag {
-background: rgba(100,140,220,0.2); color: #8ab4ff;
-padding: 4px 12px; border-radius: 15px; font-size: 0.8rem;
-display: flex; align-items: center; gap: 6px;
-}
-.filter-tag .remove-filter { cursor: pointer; opacity: 0.7; transition: opacity 0.2s; }
-.filter-tag .remove-filter:hover { opacity: 1; }
-.items-grid {
-display: grid;
-grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-gap: 25px;
-}
-.item-card {
-background: #2a2a35; border-radius: 12px; overflow: hidden;
-transition: transform 0.4s ease, box-shadow 0.4s ease;
-box-shadow: 0 4px 10px rgba(0,0,0,0.3); position: relative; cursor: pointer;
-}
-.item-card:hover { transform: scale(1.03); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-.item-card img { width: 100%; height: 300px; object-fit: cover; display: block; }
-.item-info { padding: 15px; }
-.item-info h3 {
-font-size: 1.05rem; margin-bottom: 6px; color: #fff;
-white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.item-info p { font-size: 0.85rem; color: #888; }
-.card-actions {
-position: absolute; top: 10px; right: 10px;
-display: flex; flex-direction: column; gap: 8px; z-index: 10;
-}
-.action-btn {
-background: rgba(0,0,0,0.7); color: white; border: none;
-border-radius: 50%; width: 35px; height: 35px; cursor: pointer;
-font-size: 0.9rem; display: flex; align-items: center; justify-content: center;
-transition: all 0.3s; opacity: 0; transform: translateX(10px);
-}
-.item-card:hover .action-btn { opacity: 1; transform: translateX(0); }
-.action-btn:hover { background: #648cdc; transform: scale(1.1); }
-.action-btn.favorite.active {
-color: #ff4757; background: rgba(255, 71, 87, 0.2);
-}
-.action-btn.favorite.active:hover { background: #ff4757; }
-.loading, .error-message {
-text-align: center; padding: 40px 20px; font-size: 1.1rem; display: none;
-}
-.loading.show, .error-message.show { display: block; }
-.loading { color: #888; }
-.error-message { color: #ff6b6b; background: rgba(255,107,107,0.1); border-radius: 8px; }
-footer {
-margin-left: 280px; padding: 20px 40px; text-align: center;
-color: rgba(255,255,255,0.5); font-size: 0.85rem;
-border-top: 1px solid #333;
-}
-/* ===== MODALS ===== */
-.modal {
-display: none; position: fixed; z-index: 2000;
-left: 0; top: 0; width: 100%; height: 100%;
-background: rgba(0,0,0,0.95); backdrop-filter: blur(5px);
-}
-.modal-content {
-position: absolute; top: 50%; left: 50%;
-transform: translate(-50%, -50%);
-width: 90%; max-width: 1100px; background: #23232b;
-border-radius: 12px; padding: 25px;
-box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-max-height: 90vh; overflow-y: auto;
-}
-.close-modal {
-position: absolute; top: 15px; right: 20px;
-font-size: 1.8rem; color: #888; cursor: pointer;
-transition: color 0.2s; line-height: 1;
-}
-.close-modal:hover { color: #fff; }
-.auth-modal-content {
-max-width: 420px; text-align: center; padding: 35px;
-}
-.auth-modal-content h2 { margin-bottom: 10px; color: #fff; }
-.auth-modal-content p { color: #888; margin-bottom: 25px; font-size: 0.95rem; }
-.auth-input {
-width: 100%; padding: 12px; margin-bottom: 15px;
-background: #2a2a35; border: 1px solid #3a3a4a;
-border-radius: 8px; color: #fff; font-size: 1rem;
-}
-.auth-input:focus { outline: none; border-color: #648cdc; }
-.auth-btn {
-width: 100%; padding: 12px; background: #648cdc;
-color: #fff; border: none; border-radius: 8px;
-font-size: 1rem; font-weight: 600; cursor: pointer;
-transition: background 0.2s;
-}
-.auth-btn:hover { background: #5a7bc0; }
-.auth-hint {
-margin-top: 20px; font-size: 0.85rem; color: #666;
-}
-.auth-hint a { color: #648cdc; text-decoration: none; }
-.auth-hint a:hover { text-decoration: underline; }
-.user-profile {
-display: flex; align-items: center; gap: 12px;
-padding: 12px; background: rgba(100,140,220,0.1);
-border-radius: 10px; margin-bottom: 15px;
-}
-.user-avatar {
-width: 45px; height: 45px; border-radius: 50%;
-background: linear-gradient(135deg, #648cdc, #8e2de2);
-display: flex; align-items: center; justify-content: center;
-font-weight: 600; font-size: 1.1rem; color: #fff;
-overflow: hidden;
-}
-.user-avatar img { width: 100%; height: 100%; object-fit: cover; }
-.user-info { text-align: left; }
-.user-name { font-weight: 600; color: #fff; font-size: 1rem; }
-.user-email { font-size: 0.85rem; color: #888; }
-.logout-btn {
-width: 100%; padding: 10px;
-background: rgba(220, 53, 69, 0.2);
-color: #ff6b6b; border: 1px solid #dc3545;
-border-radius: 8px; cursor: pointer;
-font-size: 0.9rem; transition: all 0.2s;
-display: flex; align-items: center; justify-content: center; gap: 8px;
-}
-.logout-btn:hover {
-background: rgba(220, 53, 69, 0.4);
-color: #fff;
-}
-.video-player-container {
-background: #0a0a0f; border-radius: 10px;
-overflow: hidden; position: relative; margin-bottom: 20px;
-}
-.video-player {
-width: 100%; height: 500px; background: #000;
-display: block; object-fit: contain;
-}
-.video-info { display: flex; gap: 25px; padding: 15px 0; }
-.video-poster {
-width: 180px; height: 270px; border-radius: 8px;
-object-fit: cover; flex-shrink: 0;
-box-shadow: 0 5px 20px rgba(0,0,0,0.4);
-}
-.video-details { flex: 1; min-width: 0; }
-.video-title {
-font-size: 1.7rem; margin-bottom: 12px; color: #fff;
-font-weight: 600; line-height: 1.3;
-}
-.video-meta {
-display: flex; flex-wrap: wrap; gap: 10px;
-margin-bottom: 15px; color: #aaa; font-size: 0.9rem;
-}
-.badge {
-background: #3a3a4a; padding: 4px 12px;
-border-radius: 15px; font-weight: 500;
-}
-.badge.rating { background: #4a4a5a; color: #ffd700; }
-.video-description {
-color: #bbb; line-height: 1.6; font-size: 0.95rem;
-max-height: 120px; overflow-y: auto; padding-right: 10px;
-}
-.video-description::-webkit-scrollbar { width: 4px; }
-.video-description::-webkit-scrollbar-thumb { background: #555; border-radius: 2px; }
-/* ===== VIDEO CONTROLS ===== */
-.video-controls {
-position: absolute; bottom: 0; left: 0; right: 0;
-background: linear-gradient(transparent, rgba(0,0,0,0.85));
-padding: 20px 15px 15px; display: flex;
-align-items: center; gap: 12px; opacity: 0;
-transition: opacity 0.3s;
-}
-.video-player-container:hover .video-controls { opacity: 1; }
-.control-btn {
-background: rgba(255,255,255,0.15); border: none;
-color: white; width: 38px; height: 38px; border-radius: 50%;
-cursor: pointer; transition: all 0.2s;
-display: flex; align-items: center; justify-content: center;
-font-size: 1rem; flex-shrink: 0;
-}
-.control-btn:hover { background: rgba(255,255,255,0.3); transform: scale(1.05); }
-.progress-container {
-flex: 1; height: 5px; background: rgba(255,255,255,0.2);
-border-radius: 3px; cursor: pointer; position: relative; margin: 0 10px;
-}
-.progress-bar {
-height: 100%; background: #6a6a8a; border-radius: 3px;
-width: 0%; transition: width 0.1s linear;
-}
-.time-display {
-color: #fff; font-size: 0.85rem; min-width: 85px;
-font-family: monospace; text-align: center;
-}
-.volume-container { display: flex; align-items: center; gap: 8px; }
-#volume-slider { width: 70px; margin: 0; accent-color: #6a6a8a; }
-/* ===== COMMENTS TABS ===== */
-.comments-tabs {
-display: flex;
-gap: 5px;
-margin: 20px 0 15px;
-border-bottom: 1px solid rgba(255,255,255,0.1);
-padding-bottom: 10px;
-}
-.comments-tab {
-padding: 10px 20px;
-background: transparent;
-border: none;
-color: #888;
-cursor: pointer;
-font-size: 0.95rem;
-font-weight: 500;
-border-radius: 8px 8px 0 0;
-transition: all 0.2s;
-position: relative;
-}
-.comments-tab:hover {
-color: #fff;
-background: rgba(255,255,255,0.05);
-}
-.comments-tab.active {
-color: #648cdc;
-background: rgba(100, 140, 220, 0.15);
-}
-.comments-tab.active::after {
-content: '';
-position: absolute;
-bottom: -11px;
-left: 0;
-right: 0;
-height: 2px;
-background: #648cdc;
-}
-.comments-tab i { margin-right: 6px; }
-.comments-container {
-display: none;
-padding: 10px 0;
-}
-.comments-container.active {
-display: block;
-animation: fadeIn 0.3s ease;
-}
-@keyframes fadeIn {
-from { opacity: 0; transform: translateY(10px); }
-to { opacity: 1; transform: translateY(0); }
-}
-/* Disqus container styling */
-#disqus-thread {
-background: rgba(42, 42, 53, 0.5);
-border-radius: 12px;
-padding: 20px;
-border: 1px solid rgba(255,255,255,0.05);
-}
-#disqus-thread iframe {
-border-radius: 8px;
-}
-.comments-hint {
-text-align: center;
-color: #888;
-padding: 30px 20px;
-font-size: 0.95rem;
-}
-.comments-hint i {
-font-size: 2.5rem;
-margin-bottom: 15px;
-display: block;
-color: #555;
-}
-.comments-hint a {
-color: #648cdc;
-text-decoration: none;
-font-weight: 500;
-}
-.comments-hint a:hover { text-decoration: underline; }
-/* ===== NOTIFICATIONS ===== */
-@keyframes slideIn {
-from { transform: translateX(200px); opacity: 0; }
-to { transform: translateX(0); opacity: 1; }
-}
-@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
-.notification {
-position: fixed; top: 90px; right: 20px;
-background: #4a4a5a; color: white; padding: 14px 25px;
-border-radius: 50px; box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-z-index: 9999; animation: slideIn 0.3s ease forwards, fadeOut 0.4s ease 2.6s forwards;
-display: flex; align-items: center; gap: 10px;
-font-weight: 500; font-size: 0.95rem;
-}
-.notification.success { background: linear-gradient(90deg, #28a745, #20c997); }
-.notification.error { background: linear-gradient(90deg, #dc3545, #c82333); }
-.notification.info { background: linear-gradient(90deg, #17a2b8, #138496); }
-/* ===== RESPONSIVE ===== */
-@media (max-width: 1024px) {
-.sidebar { width: 240px; padding: 20px 15px; }
-.main-content, footer { margin-left: 240px; padding: 115px 30px 30px; }
-.video-player { height: 400px; }
-.video-poster { width: 150px; height: 225px; }
-}
-@media (max-width: 768px) {
-.top-search-bar { padding: 12px 15px; position: relative; }
-body { flex-direction: column; }
-.sidebar {
-width: 100%; position: relative; height: auto;
-max-height: 50vh; border-right: none; border-bottom: 1px solid #333;
-padding: 12px; top: 65px;
-}
-.sidebar-header h1 { font-size: 1.4rem; }
-.sidebar-nav ul, .type-buttons, .genre-buttons {
-flex-direction: row; flex-wrap: wrap; gap: 6px;
-}
-.sidebar-nav a, .type-btn, .genre-btn {
-padding: 7px 12px; font-size: 0.8rem; justify-content: center;
-}
-.sidebar-section h3 { font-size: 0.85rem; }
-.genre-header { flex-direction: column; align-items: flex-start; gap: 5px; }
-.genre-buttons { max-height: none; overflow-y: visible; padding-right: 0; }
-.main-content, footer { margin-left: 0; padding: 20px 15px; }
-.items-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; }
-.item-card img { height: 220px; }
-.modal-content { width: 95%; padding: 15px; }
-.video-player { height: 250px; }
-.video-info { flex-direction: column; align-items: center; text-align: center; }
-.video-poster { width: 100%; max-width: 200px; height: 300px; }
-.video-title { font-size: 1.4rem; }
-.video-meta { justify-content: center; }
-.control-btn { width: 34px; height: 34px; font-size: 0.9rem; }
-.progress-container { height: 4px; }
-#volume-slider { width: 50px; }
-.page-header { flex-direction: column; align-items: flex-start; }
-.search-results { position: fixed; left: 10px; right: 10px; max-width: none; }
-.action-btn { opacity: 1; transform: translateX(0); }
-.auth-buttons { flex-direction: row; flex-wrap: wrap; justify-content: center; }
-.oauth-btn { flex: 1; min-width: 140px; }
-.comments-tabs { flex-wrap: wrap; }
-.comments-tab { padding: 8px 15px; font-size: 0.9rem; }
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WatchHive | Фильмы, Сериалы, Дорамы</title>
+  
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/styles.css">
+  
+  <!-- External SDKs -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://vk.com/js/api/openapi.js?169" type="text/javascript"></script>
 </head>
 <body>
-<!-- ===== TOP SEARCH BAR ===== -->
-<div class="top-search-bar">
-<div class="search-container">
-<input type="text" class="search-input" id="search-input" placeholder="Поиск фильмов, сериалов, дорам по названию..." autocomplete="off">
-<button class="clear-search" id="clear-search" title="Очистить поиск"><i class="fas fa-times"></i></button>
-<button class="search-btn" id="search-btn" title="Поиск"><i class="fas fa-search"></i></button>
-<div class="search-results" id="search-results"></div>
-</div>
-</div>
-<!-- ===== SIDEBAR ===== -->
-<aside class="sidebar">
-<div class="sidebar-header">
-<h1>WatchHive</h1>
-</div>
-<!-- Навигация -->
-<div class="sidebar-section">
-<h3><i class="fas fa-compass"></i> Разделы</h3>
-<nav class="sidebar-nav">
-<ul>
-<li><a href="#" data-page="popular" class="nav-btn active"><i class="fas fa-fire"></i> Популярное</a></li>
-<li><a href="#" data-page="all" class="nav-btn"><i class="fas fa-th-large"></i> Все контенты</a></li>
-<li><a href="#" data-page="favorites" class="nav-btn"><i class="fas fa-heart"></i> Избранное <span id="fav-count" class="badge-count">0</span></a></li>
-</ul>
-</nav>
-</div>
-<!-- Авторизация -->
-<div class="sidebar-section">
-<h3><i class="fas fa-user"></i> Аккаунт</h3>
-<!-- Кнопки входа (если не авторизован) -->
-<div id="auth-buttons" class="auth-buttons">
-<button class="oauth-btn google" id="google-signin">
-<i class="fab fa-google"></i> Войти через Google
-</button>
-<button class="oauth-btn vk" id="vk-signin">
-<i class="fab fa-vk"></i> Войти через ВКонтакте
-</button>
-<div class="oauth-divider">или</div>
-<button class="type-btn" id="demo-login" style="width:100%; justify-content:center;">
-<i class="fas fa-user-circle"></i> Демо-вход
-</button>
-</div>
-<!-- Профиль пользователя (если авторизован) -->
-<div id="user-profile" style="display:none;">
-<div class="user-profile">
-<div class="user-avatar" id="user-avatar">
-<i class="fas fa-user"></i>
-</div>
-<div class="user-info">
-<div class="user-name" id="user-name">Пользователь</div>
-<div class="user-email" id="user-provider">Вход через...</div>
-</div>
-</div>
-<button class="logout-btn" id="logout-btn">
-<i class="fas fa-sign-out-alt"></i> Выйти
-</button>
-</div>
-</div>
-<!-- Тип контента -->
-<div class="sidebar-section" id="type-section" style="display:none;">
-<h3><i class="fas fa-filter"></i> Тип контента</h3>
-<div class="type-buttons">
-<button class="type-btn active" data-type="movie"><i class="fas fa-film"></i> Фильмы</button>
-<button class="type-btn" data-type="tv"><i class="fas fa-tv"></i> Сериалы</button>
-<button class="type-btn" data-type="korean"><i class="fas fa-globe-asia"></i> Дорамы</button>
-</div>
-</div>
-<!-- Жанры с мультивыбором -->
-<div class="sidebar-section" id="genre-section" style="display:none;">
-<div class="genre-header">
-<h3><i class="fas fa-tags"></i> Жанры <span id="genre-count" class="selected-count"></span></h3>
-<button class="clear-genres-btn" id="clear-genres-btn">
-<i class="fas fa-times"></i> Сбросить
-</button>
-</div>
-<div class="genre-buttons" id="genres-container"></div>
-</div>
-</aside>
-<!-- ===== MAIN CONTENT ===== -->
-<main class="main-content">
-<!-- Популярное -->
-<div id="popular-page" class="page active">
-<div class="page-header"><h2>🔥 Популярное сегодня</h2></div>
-<div id="items-container-popular" class="items-grid"></div>
-<div id="loading-popular" class="loading"><i class="fas fa-spinner fa-spin"></i> Загрузка...</div>
-<div id="error-popular" class="error-message"></div>
-</div>
-<!-- Все контенты -->
-<div id="all-page" class="page">
-<div class="page-header">
-<h2>📚 Все контенты</h2>
-<div class="active-filters" id="active-filters"></div>
-</div>
-<div id="items-container-all" class="items-grid"></div>
-<div id="loading-all" class="loading"><i class="fas fa-spinner fa-spin"></i> Загрузка...</div>
-<div id="error-all" class="error-message"></div>
-</div>
-<!-- Избранное -->
-<div id="favorites-page" class="page">
-<div class="page-header">
-<h2>❤️ Моё Избранное</h2>
-<p style="color:#888; font-size:0.9rem;">Ваши сохранённые фильмы и сериалы</p>
-</div>
-<div id="items-container-favorites" class="items-grid"></div>
-<div id="loading-favorites" class="loading"><i class="fas fa-spinner fa-spin"></i> Загрузка...</div>
-<div id="error-favorites" class="error-message"></div>
-<div id="empty-favorites" style="text-align:center; padding: 50px; color:#666; display:none;">
-<i class="far fa-heart" style="font-size: 3rem; margin-bottom: 15px; display:block;"></i>
-<p>Список избранного пуст</p>
-<p style="font-size:0.9rem">Добавляйте фильмы, нажимая на сердечко ❤️</p>
-</div>
-</div>
-<!-- Результаты поиска -->
-<div id="search-page" class="page">
-<div class="page-header">
-<h2>🔍 Результаты поиска</h2>
-<div class="active-filters" id="search-filters"></div>
-</div>
-<div id="items-container-search" class="items-grid"></div>
-<div id="loading-search" class="loading"><i class="fas fa-spinner fa-spin"></i> Поиск...</div>
-<div id="error-search" class="error-message"></div>
-</div>
-</main>
-<footer>
-&copy; 2026 WatchHive — ваш гид по миру кино и сериалов
-</footer>
-<!-- ===== AUTH MODAL (Demo) ===== -->
-<div id="auth-modal" class="modal">
-<div class="modal-content auth-modal-content">
-<span class="close-modal" id="close-auth">&times;</span>
-<h2><i class="fas fa-user-circle"></i> Демо-вход</h2>
-<p>Для тестирования введите любое имя</p>
-<input type="text" class="auth-input" id="demo-username" placeholder="Ваше имя">
-<button class="auth-btn" id="demo-login-btn">Войти</button>
-<p class="auth-hint">
-<i class="fas fa-info-circle"></i>
-Для полноценной авторизации через Google/VK настройте приложение в
-<a href="https://console.cloud.google.com/" target="_blank">Google Cloud</a> или
-<a href="https://vk.com/dev" target="_blank">VK Developers</a>
-</p>
-</div>
-</div>
-<!-- ===== VIDEO MODAL ===== -->
-<div id="video-modal" class="modal">
-<div class="modal-content">
-<span class="close-modal">&times;</span>
-<div class="video-player-container">
-<video id="video-player" class="video-player" preload="auto" playsinline webkit-playsinline>
-<source src="" type="video/mp4">
-Ваш браузер не поддерживает видео в формате HTML5.
-</video>
-<div class="video-controls">
-<button class="control-btn" id="play-pause" title="Воспроизвести/Пауза"><i class="fas fa-play"></i></button>
-<div class="progress-container" id="progress-container"><div class="progress-bar" id="progress-bar"></div></div>
-<span class="time-display" id="time-display">0:00 / 0:00</span>
-<button class="control-btn" id="volume-btn" title="Звук"><i class="fas fa-volume-up"></i></button>
-<div class="volume-container"><input type="range" id="volume-slider" min="0" max="1" step="0.05" value="1"></div>
-<button class="control-btn" id="fullscreen-btn" title="Полноэкранный режим"><i class="fas fa-expand"></i></button>
-</div>
-</div>
-<div class="video-info">
-<img id="modal-poster" class="video-poster" src="" alt="Постер">
-<div class="video-details">
-<h2 id="modal-title" class="video-title">Загрузка...</h2>
-<div class="video-meta">
-<span id="modal-rating" class="badge rating">★ 0.0</span>
-<span id="modal-year" class="badge">📅 2026</span>
-<span id="modal-duration" class="badge">⏱ 0 мин</span>
-<span id="modal-genres" class="badge">🎭 ...</span>
-</div>
-<p id="modal-description" class="video-description">Загрузка описания...</p>
-<!-- ===== COMMENTS SECTION ===== -->
-<div class="comments-tabs">
-<button class="comments-tab active" data-tab="description">
-<i class="fas fa-align-left"></i> Описание
-</button>
-<button class="comments-tab" data-tab="comments">
-<i class="fas fa-comments"></i> Комментарии <span id="comments-count" class="badge-count" style="margin-left:5px;display:none">0</span>
-</button>
-</div>
-<div id="tab-description" class="comments-container active">
-<p id="modal-description-full" style="color:#bbb;line-height:1.7;font-size:0.95rem;">
-Загрузка описания...
-</p>
-</div>
-<div id="tab-comments" class="comments-container">
-<div id="disqus-container">
-<div id="disqus-thread"></div>
-</div>
-<div id="disqus-hint" class="comments-hint" style="display:none;">
-<i class="fas fa-comments"></i>
-<p>Комментарии загружаются...</p>
-<p style="font-size:0.85rem;color:#666;margin-top:10px;">
-Не видно комментарии? <a href="https://disqus.com/" target="_blank">Проверьте подключение</a>
-</p>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<script>
-// ===== CONFIG =====
-const API_KEY = 'be7d23de539307aafd91e16bc4ce5c8f';
-const BASE_URL = 'https://api.themoviedb.org/3';
-// ⚠️ ЗАМЕНИТЕ НА СВОИ ЗНАЧЕНИЯ ИЗ КОНСОЛЕЙ РАЗРАБОТЧИКА
-const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
-const VK_APP_ID = 12345678;
-// ⚠️ ЗАМЕНИТЕ НА ВАШ SHORTNAME ИЗ DISQUS
-const DISQUS_SHORTNAME = 'watchhive';
-// ===== STATE =====
-let popularType = 'movie';
-let currentType = 'movie';
-let genresList = {};
-let selectedGenres = [];
-let videoPlayer = null;
-let currentMediaInfo = null;
-let searchTimeout = null;
-let currentSearchQuery = '';
-// ===== AUTH STATE =====
-let currentUser = null;
-let authProvider = null;
-let favorites = JSON.parse(localStorage.getItem('watchhive_favorites')) || [];
-// ===== NOTIFICATIONS =====
-function showNotification(message, type = 'success') {
-const notification = document.createElement('div');
-notification.className = `notification ${type}`;
-notification.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i> ${message}`;
-document.body.appendChild(notification);
-setTimeout(() => notification.remove(), 3000);
-}
-// ===== AUTH FUNCTIONS =====
-function updateAuthUI() {
-const authButtons = document.getElementById('auth-buttons');
-const userProfile = document.getElementById('user-profile');
-if (currentUser) {
-authButtons.style.display = 'none';
-userProfile.style.display = 'block';
-document.getElementById('user-name').textContent = currentUser.name;
-document.getElementById('user-provider').textContent =
-authProvider === 'google' ? 'Google' :
-authProvider === 'vk' ? 'ВКонтакте' : 'Демо-режим';
-const avatarEl = document.getElementById('user-avatar');
-if (currentUser.avatar) {
-avatarEl.innerHTML = `<img src="${currentUser.avatar}" alt="${currentUser.name}">`;
-} else {
-avatarEl.innerHTML = `<i class="fas fa-user"></i>`;
-avatarEl.style.background = `linear-gradient(135deg, ${getRandomColor()}, ${getRandomColor()})`;
-avatarEl.textContent = currentUser.name.charAt(0).toUpperCase();
-}
-updateFavCount();
-} else {
-authButtons.style.display = 'flex';
-userProfile.style.display = 'none';
-updateFavCount();
-}
-}
-function getRandomColor() {
-const colors = ['#648cdc', '#8e2de2', '#28a745', '#dc3545', '#17a2b8', '#ffc107'];
-return colors[Math.floor(Math.random() * colors.length)];
-}
-function login(user, provider) {
-currentUser = user;
-authProvider = provider;
-localStorage.setItem('watchhive_user', JSON.stringify({ name: user.name, email: user.email, avatar: user.avatar, provider }));
-updateAuthUI();
-showNotification(`🎉 Добро пожаловать, ${user.name}!`, 'success');
-}
-function logout() {
-if(confirm('Выйти из аккаунта?')) {
-currentUser = null;
-authProvider = null;
-localStorage.removeItem('watchhive_user');
-updateAuthUI();
-showNotification('Вы вышли из аккаунта', 'info');
-}
-}
-// ===== GOOGLE AUTH =====
-function initGoogleAuth() {
-if (typeof google === 'undefined') { console.warn('Google SDK not loaded'); return; }
-if (GOOGLE_CLIENT_ID && !GOOGLE_CLIENT_ID.startsWith('YOUR_')) {
-google.accounts.id.initialize({
-client_id: GOOGLE_CLIENT_ID,
-callback: handleGoogleCredential,
-auto_select: false
-});
-}
-}
-function handleGoogleCredential(response) {
-try {
-const payload = JSON.parse(atob(response.credential.split('.')[1]));
-login({
-name: payload.name || payload.email?.split('@')[0] || 'Пользователь',
-email: payload.email,
-avatar: payload.picture
-}, 'google');
-} catch (e) {
-console.error('Google auth error:', e);
-showNotification('❌ Ошибка авторизации Google', 'error');
-}
-}
-// ===== VK AUTH =====
-function initVKAuth() {
-if (typeof VK === 'undefined') { console.warn('VK SDK not loaded'); return; }
-if (VK_APP_ID && VK_APP_ID !== 12345678) {
-VK.init({ apiId: VK_APP_ID, onlyWidgets: false });
-}
-}
-function vkAuthCallback(response) {
-if (response.session) {
-VK.Api.call('users.get', { fields: 'photo_100' }, function(r) {
-if (r.response && r.response[0]) {
-const user = r.response[0];
-login({
-name: `${user.first_name} ${user.last_name}`.trim() || 'Пользователь',
-avatar: user.photo_100
-}, 'vk');
-}
-});
-} else if (response.error) {
-console.error('VK auth error:', response.error);
-showNotification('❌ Ошибка авторизации ВКонтакте', 'error');
-}
-}
-// ===== DEMO AUTH =====
-function setupDemoAuth() {
-document.getElementById('demo-login').addEventListener('click', () => {
-document.getElementById('auth-modal').style.display = 'block';
-document.getElementById('demo-username').focus();
-});
-document.getElementById('demo-login-btn').addEventListener('click', () => {
-const name = document.getElementById('demo-username').value.trim();
-if (name) {
-login({ name, email: null, avatar: null }, 'demo');
-document.getElementById('auth-modal').style.display = 'none';
-} else {
-showNotification('Введите имя', 'error');
-}
-});
-document.getElementById('close-auth').addEventListener('click', () => {
-document.getElementById('auth-modal').style.display = 'none';
-});
-window.addEventListener('click', (e) => {
-if (e.target.id === 'auth-modal') {
-document.getElementById('auth-modal').style.display = 'none';
-}
-});
-}
-// ===== FAVORITES =====
-function toggleFavorite(id, type, title, poster) {
-if (!currentUser) {
-showNotification('⚠️ Войдите в аккаунт, чтобы добавлять в избранное', 'error');
-document.getElementById('auth-modal').style.display = 'block';
-return;
-}
-const index = favorites.findIndex(f => f.id === id);
-const cardBtn = document.querySelector(`.action-btn.favorite[data-id="${id}"]`);
-if (index === -1) {
-favorites.push({ id, type, title, poster });
-if (cardBtn) { cardBtn.classList.add('active'); cardBtn.innerHTML = '<i class="fas fa-heart"></i>'; }
-showNotification('✅ Добавлено в избранное', 'success');
-} else {
-favorites.splice(index, 1);
-if (cardBtn) { cardBtn.classList.remove('active'); cardBtn.innerHTML = '<i class="far fa-heart"></i>'; }
-showNotification('❌ Удалено из избранного', 'info');
-const card = document.querySelector(`.item-card[data-id="${id}"]`);
-if (card) {
-card.style.opacity = '0'; card.style.transform = 'scale(0.9)';
-setTimeout(() => {
-card.remove();
-if (favorites.length === 0) {
-document.getElementById('items-container-favorites').innerHTML = '';
-document.getElementById('empty-favorites').style.display = 'block';
-}
-}, 300);
-}
-}
-localStorage.setItem('watchhive_favorites', JSON.stringify(favorites));
-updateFavCount();
-}
-function updateFavCount() {
-document.getElementById('fav-count').textContent = favorites.length;
-}
-function isFavorite(id) { return favorites.some(f => f.id === id); }
-// ===== SEARCH =====
-const searchInput = document.getElementById('search-input');
-const searchBtn = document.getElementById('search-btn');
-const clearSearch = document.getElementById('clear-search');
-const searchResults = document.getElementById('search-results');
-searchBtn.addEventListener('click', () => {
-const query = searchInput.value.trim();
-if (query) { performSearch(query); searchResults.classList.remove('show'); }
-});
-searchInput.addEventListener('keypress', (e) => {
-if (e.key === 'Enter') {
-const query = searchInput.value.trim();
-if (query) { performSearch(query); searchResults.classList.remove('show'); }
-}
-});
-clearSearch.addEventListener('click', () => {
-searchInput.value = ''; clearSearch.classList.remove('visible');
-searchResults.classList.remove('show'); currentSearchQuery = '';
-});
-searchInput.addEventListener('input', (e) => {
-const query = e.target.value.trim();
-if (query.length > 0) { clearSearch.classList.add('visible'); debounceSearch(query); }
-else { clearSearch.classList.remove('visible'); searchResults.classList.remove('show'); }
-});
-function debounceSearch(query) {
-clearTimeout(searchTimeout);
-searchTimeout = setTimeout(() => {
-if (query.length >= 2) fetchSearchSuggestions(query);
-else searchResults.classList.remove('show');
-}, 300);
-}
-async function fetchSearchSuggestions(query) {
-try {
-const response = await fetch(`${BASE_URL}/search/multi?api_key=${API_KEY}&language=ru-RU&query=${encodeURIComponent(query)}&page=1&include_adult=false`);
-if (!response.ok) throw new Error('API error');
-const data = await response.json();
-displaySearchSuggestions(data.results?.slice(0, 5) || []);
-} catch (error) { console.error('Search error:', error); }
-}
-function displaySearchSuggestions(results) {
-if (results.length === 0) {
-searchResults.innerHTML = '<div class="search-no-results">Ничего не найдено</div>';
-searchResults.classList.add('show'); return;
-}
-searchResults.innerHTML = results.map(item => {
-if (!item.title && !item.name) return '';
-const title = item.title || item.name;
-const year = item.release_date || item.first_air_date ? new Date(item.release_date || item.first_air_date).getFullYear() : '';
-const type = item.media_type === 'movie' ? 'Фильм' : item.media_type === 'tv' ? 'Сериал' : '';
-const poster = item.poster_path ? `https://image.tmdb.org/t/p/w92${item.poster_path}` : '';
-return `
-<div class="search-result-item" data-id="${item.id}" data-type="${item.media_type}" data-title="${title}">
-<img src="${poster || 'https://via.placeholder.com/40x60?text=No+Image'}" alt="${title}" onerror="this.src='https://via.placeholder.com/40x60?text=No+Image'">
-<div class="search-result-info">
-<div class="search-result-title">${title}</div>
-<div class="search-result-meta">${type}${year ? ' • ' + year : ''}</div>
-</div>
-</div>`;
-}).join('');
-searchResults.querySelectorAll('.search-result-item').forEach(item => {
-item.addEventListener('click', () => {
-const id = item.dataset.id; const type = item.dataset.type; const title = item.dataset.title;
-performSearch(title, id, type); searchResults.classList.remove('show');
-});
-});
-searchResults.classList.add('show');
-}
-async function performSearch(query, specificId = null, specificType = null) {
-currentSearchQuery = query;
-document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-document.getElementById('search-page').classList.add('active');
-document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-showLoading('search', true);
-try {
-let results;
-if (specificId && specificType) {
-results = { results: [], id: specificId, type: specificType };
-openVideoModal(specificId, specificType, query, '0.0', '');
-} else {
-const response = await fetch(`${BASE_URL}/search/multi?api_key=${API_KEY}&language=ru-RU&query=${encodeURIComponent(query)}&page=1&include_adult=false`);
-if (!response.ok) throw new Error('API error');
-results = await response.json();
-}
-const filteredResults = (results.results || []).filter(item => item.media_type === 'movie' || item.media_type === 'tv');
-if (filteredResults.length > 0) {
-displaySearchResults(filteredResults);
-showNotification(`🔍 Найдено: ${filteredResults.length} результатов для "${query}"`, 'info');
-} else { showError('search', 'Ничего не найдено по вашему запросу'); }
-} catch (error) { console.error('Search error:', error); showError('search', 'Ошибка при поиске'); }
-finally { showLoading('search', false); }
-}
-function displaySearchResults(items) {
-const container = document.getElementById('items-container-search');
-container.innerHTML = '';
-if (!items?.length) { container.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#888">Контент не найден</p>'; return; }
-items.forEach(item => {
-const posterPath = item.poster_path ? `https://image.tmdb.org/t/p/w500${item.poster_path}` : 'https://via.placeholder.com/200x300?text=Нет+изображения';
-const title = item.title || item.name || 'Без названия';
-const rating = (item.vote_average ?? 0).toFixed(1);
-const releaseDate = item.release_date || item.first_air_date || '';
-const year = releaseDate ? new Date(releaseDate).getFullYear() : '???';
-const type = item.media_type;
-const card = createItemCard(item.id, type, title, rating, year, posterPath);
-container.appendChild(card);
-});
-}
-document.addEventListener('click', (e) => {
-if (!e.target.closest('.search-container')) searchResults.classList.remove('show');
-});
-// ===== NAVIGATION =====
-document.querySelectorAll('.nav-btn').forEach(btn => {
-btn.addEventListener('click', e => {
-e.preventDefault();
-const page = btn.dataset.page;
-document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-document.getElementById(`${page}-page`).classList.add('active');
-document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-btn.classList.add('active');
-const typeSection = document.getElementById('type-section');
-const genreSection = document.getElementById('genre-section');
-if (page === 'all') {
-typeSection.style.display = 'flex'; genreSection.style.display = 'flex';
-loadGenres(currentType); fetchAllContent();
-} else if (page === 'favorites') {
-typeSection.style.display = 'none'; genreSection.style.display = 'none';
-renderFavorites();
-} else {
-typeSection.style.display = 'none'; genreSection.style.display = 'none';
-fetchPopular(popularType);
-}
-});
-});
-document.querySelectorAll('.type-btn').forEach(btn => {
-btn.addEventListener('click', e => {
-e.preventDefault();
-currentType = btn.dataset.type;
-document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
-btn.classList.add('active');
-selectedGenres = []; updateGenreButtons(); updateActiveFilters();
-showLoading('all', true); loadGenres(currentType); fetchAllContent();
-});
-});
-// ===== UTILS =====
-function showLoading(page, show) {
-const loadingEl = document.getElementById(`loading-${page}`);
-const errorEl = document.getElementById(`error-${page}`);
-if (show) { loadingEl.classList.add('show'); errorEl.classList.remove('show'); }
-else { loadingEl.classList.remove('show'); }
-}
-function showError(page, message) {
-const errorEl = document.getElementById(`error-${page}`);
-const loadingEl = document.getElementById(`loading-${page}`);
-errorEl.textContent = `⚠️ ${message}`;
-errorEl.classList.add('show'); loadingEl.classList.remove('show');
-}
-// ===== GENRES =====
-function renderGenreButtons(type) {
-const container = document.getElementById('genres-container');
-container.innerHTML = '';
-if (!genresList[type] || Object.keys(genresList[type]).length === 0) {
-container.innerHTML = '<span style="color:#666;font-size:0.85rem">Жанры не найдены</span>'; return;
-}
-Object.entries(genresList[type]).forEach(([id, name]) => {
-const btn = document.createElement('button');
-btn.className = `genre-btn ${selectedGenres.includes(id) ? 'selected' : ''}`;
-btn.textContent = name; btn.dataset.genreId = id;
-btn.onclick = () => {
-const genreId = parseInt(id); const index = selectedGenres.indexOf(genreId);
-if (index === -1) selectedGenres.push(genreId); else selectedGenres.splice(index, 1);
-updateGenreButtons(); updateActiveFilters(); fetchBySelectedGenres();
-};
-container.appendChild(btn);
-});
-updateGenreCount(); updateClearButton();
-}
-function updateGenreButtons() {
-document.querySelectorAll('.genre-btn').forEach(btn => {
-const genreId = parseInt(btn.dataset.genreId);
-if (selectedGenres.includes(genreId)) btn.classList.add('selected'); else btn.classList.remove('selected');
-});
-updateGenreCount(); updateClearButton();
-}
-function updateGenreCount() {
-const countEl = document.getElementById('genre-count');
-if (selectedGenres.length > 0) { countEl.textContent = `${selectedGenres.length} выбр.`; countEl.style.display = 'inline'; }
-else countEl.style.display = 'none';
-}
-function updateClearButton() {
-const clearBtn = document.getElementById('clear-genres-btn');
-if (selectedGenres.length > 0) clearBtn.classList.add('visible'); else clearBtn.classList.remove('visible');
-}
-document.getElementById('clear-genres-btn').addEventListener('click', () => {
-selectedGenres = []; updateGenreButtons(); updateActiveFilters(); fetchAllContent();
-showNotification('🔄 Фильтры жанров сброшены', 'info');
-});
-function updateActiveFilters() {
-const container = document.getElementById('active-filters'); container.innerHTML = '';
-if (selectedGenres.length === 0) return;
-selectedGenres.forEach(genreId => {
-const genreName = genresList[currentType]?.[genreId]; if (!genreName) return;
-const tag = document.createElement('div'); tag.className = 'filter-tag';
-tag.innerHTML = `${genreName} <span class="remove-filter" data-id="${genreId}"><i class="fas fa-times"></i></span>`;
-tag.querySelector('.remove-filter').addEventListener('click', (e) => {
-e.stopPropagation(); const idx = selectedGenres.indexOf(genreId);
-if (idx > -1) { selectedGenres.splice(idx, 1); updateGenreButtons(); updateActiveFilters(); fetchBySelectedGenres(); }
-});
-container.appendChild(tag);
-});
-}
-// ===== API REQUESTS =====
-async function fetchPopular(type) {
-let url = type === 'korean' ? `${BASE_URL}/discover/tv?api_key=${API_KEY}&language=ru-RU&with_original_language=ko` : `${BASE_URL}/${type}/popular?api_key=${API_KEY}&language=ru-RU`;
-try {
-showLoading('popular', true);
-const response = await fetch(url);
-if (!response.ok) throw new Error(`Ошибка API: ${response.status}`);
-const data = await response.json();
-if (data.results?.length > 0) displayItems(data.results.slice(0, 16), 'popular'); else showError('popular', 'Контент не найден');
-} catch (error) { console.error('Ошибка:', error); showError('popular', error.message); }
-finally { showLoading('popular', false); }
-}
-async function loadGenres(type) {
-let endpoint = type === 'movie' ? 'movie' : 'tv';
-const url = `${BASE_URL}/genre/${endpoint}/list?api_key=${API_KEY}&language=ru-RU`;
-try {
-const response = await fetch(url);
-if (!response.ok) throw new Error(`Ошибка API: ${response.status}`);
-const data = await response.json();
-if (data.genres) {
-genresList[type] = data.genres.reduce((acc, g) => { acc[g.id] = g.name; return acc; }, {});
-renderGenreButtons(type);
-}
-} catch (error) { console.error('Ошибка загрузки жанров:', error); }
-}
-async function fetchBySelectedGenres() {
-if (selectedGenres.length === 0) { fetchAllContent(); return; }
-let url; const genreParam = selectedGenres.join(',');
-if (currentType === 'korean') { url = `${BASE_URL}/discover/tv?api_key=${API_KEY}&language=ru-RU&with_genres=${genreParam}&with_original_language=ko`; }
-else { url = `${BASE_URL}/discover/${currentType}?api_key=${API_KEY}&language=ru-RU&with_genres=${genreParam}`; }
-try {
-showLoading('all', true);
-const response = await fetch(url);
-if (!response.ok) throw new Error(`Ошибка API: ${response.status}`);
-const data = await response.json();
-if (data.results?.length > 0) { displayItems(data.results, 'all'); showNotification(`🎬 Найдено: ${data.results.length} по жанрам`, 'info'); }
-else showError('all', 'Контент по выбранным жанрам не найден');
-} catch (error) { console.error('Ошибка:', error); showError('all', error.message); }
-finally { showLoading('all', false); }
-}
-async function fetchAllContent() {
-let url = currentType === 'korean' ? `${BASE_URL}/discover/tv?api_key=${API_KEY}&language=ru-RU&with_original_language=ko` : `${BASE_URL}/${currentType}/popular?api_key=${API_KEY}&language=ru-RU`;
-try {
-showLoading('all', true);
-const response = await fetch(url);
-if (!response.ok) throw new Error(`Ошибка API: ${response.status}`);
-const data = await response.json();
-if (data.results?.length > 0) displayItems(data.results, 'all'); else showError('all', 'Контент не найден');
-} catch (error) { console.error('Ошибка:', error); showError('all', error.message); }
-finally { showLoading('all', false); }
-}
-// ===== ITEM CARD =====
-function createItemCard(id, type, title, rating, year, posterPath) {
-const isFav = isFavorite(id);
-const card = document.createElement('div');
-card.className = 'item-card'; card.dataset.id = id;
-card.innerHTML = `
-<img src="${posterPath}" alt="${title}" onerror="this.src='https://via.placeholder.com/200x300?text=Нет+изображения'">
-<div class="card-actions">
-<button class="action-btn favorite ${isFav ? 'active' : ''}" data-id="${id}" title="В избранное"><i class="${isFav ? 'fas' : 'far'} fa-heart"></i></button>
-<button class="action-btn watch-btn" title="Смотреть"><i class="fas fa-play"></i></button>
-</div>
-<div class="item-info"><h3 title="${title}">${title}</h3><p>★ ${rating} • ${year}</p></div>`;
-card.querySelector('.watch-btn').addEventListener('click', e => { e.stopPropagation(); openVideoModal(id, type, title, rating, year); });
-card.querySelector('.favorite').addEventListener('click', e => { e.stopPropagation(); toggleFavorite(id, type, title, posterPath); });
-card.addEventListener('click', () => openVideoModal(id, type, title, rating, year));
-return card;
-}
-function displayItems(items, page) {
-const container = document.getElementById(`items-container-${page}`); container.innerHTML = '';
-if (!items?.length) { container.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#888">Контент не найден</p>'; return; }
-items.forEach(item => {
-const posterPath = item.poster_path ? `https://image.tmdb.org/t/p/w500${item.poster_path}` : 'https://via.placeholder.com/200x300?text=Нет+изображения';
-const title = item.title || item.name || 'Без названия';
-const rating = (item.vote_average ?? 0).toFixed(1);
-const releaseDate = item.release_date || item.first_air_date || '';
-const year = releaseDate ? new Date(releaseDate).getFullYear() : '???';
-const card = createItemCard(item.id, currentType, title, rating, year, posterPath);
-container.appendChild(card);
-});
-}
-function renderFavorites() {
-const container = document.getElementById('items-container-favorites');
-const emptyMsg = document.getElementById('empty-favorites'); container.innerHTML = '';
-if (favorites.length === 0) { emptyMsg.style.display = 'block'; return; } else emptyMsg.style.display = 'none';
-favorites.forEach(item => { const card = createItemCard(item.id, item.type, item.title, '0.0', '', item.poster); container.appendChild(card); });
-}
-// ===== COMMENTS FUNCTIONS =====
-function initCommentsTabs() {
-document.querySelectorAll('.comments-tab').forEach(tab => {
-tab.addEventListener('click', () => {
-const tabName = tab.dataset.tab;
-document.querySelectorAll('.comments-tab').forEach(t => t.classList.remove('active'));
-document.querySelectorAll('.comments-container').forEach(c => c.classList.remove('active'));
-tab.classList.add('active');
-document.getElementById(`tab-${tabName}`).classList.add('active');
-// Load Disqus when comments tab is activated
-if (tabName === 'comments' && currentMediaInfo) {
-loadDisqusComments(currentMediaInfo);
-}
-});
-});
-}
-function loadDisqusComments(media) {
-const disqusContainer = document.getElementById('disqus-container');
-const disqusHint = document.getElementById('disqus-hint');
-const commentsCount = document.getElementById('comments-count');
-// Reset Disqus
-if (window.DISQUS) {
-window.DISQUS.reset({ reload: true, config: function() {
-this.page.identifier = `${media.type}_${media.id}`;
-this.page.url = window.location.href + `?movie=${media.id}`;
-this.page.title = media.title;
-}});
-} else {
-// First load
-disqusHint.style.display = 'block';
-const disqusConfig = {
-identifier: `${media.type}_${media.id}`,
-url: window.location.href + `?movie=${media.id}`,
-title: media.title,
-language: 'ru'
-};
-// Pass user data if authorized
-if (currentUser) {
-disqusConfig.sso = {
-name: 'WatchHive',
-button: 'Войти через WatchHive',
-icon: ''
-};
-}
-window.disqus_config = function() {
-this.page.identifier = disqusConfig.identifier;
-this.page.url = disqusConfig.url;
-this.page.title = disqusConfig.title;
-if (disqusConfig.sso) this.sso = disqusConfig.sso;
-};
-// Load Disqus script if not already loaded
-if (!document.getElementById('disqus-thread-script')) {
-const script = document.createElement('script');
-script.id = 'disqus-thread-script';
-script.async = true;
-script.src = `https://${DISQUS_SHORTNAME}.disqus.com/embed.js`;
-document.body.appendChild(script);
-}
-// Show count after load
-setTimeout(() => {
-const iframe = document.querySelector('#disqus-thread iframe');
-if (iframe) {
-disqusHint.style.display = 'none';
-// Try to get count
-fetch(`https://${DISQUS_SHORTNAME}.disqus.com/api/3.0/threads/details.json?api_key=E8Uh5l5fHZ6gD8U3KycjAIAk46f68Zw7C6eW8WSjZvCLXebZ7p0r1yrYDrLilk2F&thread=${disqusConfig.identifier}&forum=${DISQUS_SHORTNAME}`)
-.then(r => r.json())
-.then(data => {
-if (data?.response?.posts) {
-commentsCount.textContent = data.response.posts;
-commentsCount.style.display = 'inline';
-}
-})
-.catch(() => {});
-}
-}, 2000);
-}
-}
-// ===== VIDEO MODAL =====
-async function openVideoModal(id, type, title, rating, year) {
-const modal = document.getElementById('video-modal');
-videoPlayer = document.getElementById('video-player');
-const modalTitle = document.getElementById('modal-title');
-const modalRating = document.getElementById('modal-rating');
-const modalYear = document.getElementById('modal-year');
-const modalPoster = document.getElementById('modal-poster');
-const modalDescription = document.getElementById('modal-description');
-const modalDescriptionFull = document.getElementById('modal-description-full');
-const modalDuration = document.getElementById('modal-duration');
-const modalGenres = document.getElementById('modal-genres');
-const commentsCount = document.getElementById('comments-count');
-// Reset comments tab
-document.querySelectorAll('.comments-tab').forEach(t => t.classList.remove('active'));
-document.querySelectorAll('.comments-container').forEach(c => c.classList.remove('active'));
-document.querySelector('.comments-tab[data-tab="description"]').classList.add('active');
-document.getElementById('tab-description').classList.add('active');
-commentsCount.style.display = 'none';
-// Reset Disqus
-if (window.DISQUS) { window.DISQUS.reset({ reload: false }); }
-document.getElementById('disqus-thread').innerHTML = '';
-try {
-const [infoRes, videoRes] = await Promise.all([
-fetch(`${BASE_URL}/${type}/${id}?api_key=${API_KEY}&language=ru-RU`),
-fetch(`${BASE_URL}/${type}/${id}/videos?api_key=${API_KEY}&language=ru-RU`)
-]);
-if (!infoRes.ok || !videoRes.ok) throw new Error('Ошибка загрузки данных');
-const data = await infoRes.json();
-const videoData = await videoRes.json();
-currentMediaInfo = { id, type, title, rating, year, data };
-modalTitle.textContent = title;
-modalRating.innerHTML = `★ ${rating}`;
-modalYear.textContent = `📅 ${year}`;
-const posterPath = data.poster_path ? `https://image.tmdb.org/t/p/w500${data.poster_path}` : 'https://via.placeholder.com/200x300?text=Нет+изображения';
-modalPoster.src = posterPath;
-modalPoster.onerror = () => modalPoster.src = 'https://via.placeholder.com/200x300?text=Нет+изображения';
-modalDescription.textContent = data.overview?.substring(0, 150) + '...' || 'Описание недоступно.';
-modalDescriptionFull.textContent = data.overview || 'Описание недоступно.';
-modalDuration.textContent = type === 'movie' ? `⏱ ${data.runtime || '?'} мин` : `📺 ${data.number_of_seasons || '?'} сез.`;
-modalGenres.textContent = `🎭 ${data.genres?.map(g => g.name).join(', ') || 'Не указаны'}`;
-videoPlayer.src = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
-videoPlayer.load();
-showNotification(`🎬 "${title}" готов к просмотру`, 'success');
-} catch (error) {
-console.error('Ошибка:', error);
-showNotification('❌ Ошибка загрузки', 'error');
-modalTitle.textContent = title;
-modalDescription.textContent = 'Информация временно недоступна.';
-modalDescriptionFull.textContent = 'Информация временно недоступна.';
-videoPlayer.src = '';
-}
-modal.style.display = 'block';
-initVideoControls();
-initCommentsTabs();
-}
-// ===== VIDEO CONTROLS =====
-function initVideoControls() {
-const playPauseBtn = document.getElementById('play-pause');
-const progressBar = document.getElementById('progress-bar');
-const progressContainer = document.getElementById('progress-container');
-const timeDisplay = document.getElementById('time-display');
-const volumeBtn = document.getElementById('volume-btn');
-const volumeSlider = document.getElementById('volume-slider');
-const fullscreenBtn = document.getElementById('fullscreen-btn');
-playPauseBtn.onclick = togglePlayPause;
-videoPlayer.onclick = (e) => { e.stopPropagation(); togglePlayPause(); };
-videoPlayer.onplay = () => playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-videoPlayer.onpause = () => playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-videoPlayer.ontimeupdate = () => {
-if (videoPlayer.duration && !isNaN(videoPlayer.duration)) {
-const pct = (videoPlayer.currentTime / videoPlayer.duration) * 100;
-progressBar.style.width = `${pct}%`;
-timeDisplay.textContent = `${formatTime(videoPlayer.currentTime)} / ${formatTime(videoPlayer.duration)}`;
-}
-};
-progressContainer.onclick = (e) => {
-if (videoPlayer.duration) {
-const rect = progressContainer.getBoundingClientRect();
-const pct = (e.clientX - rect.left) / rect.width;
-videoPlayer.currentTime = pct * videoPlayer.duration;
-}
-};
-volumeBtn.onclick = () => { videoPlayer.muted = !videoPlayer.muted; updateVolumeIcon(); };
-volumeSlider.oninput = () => { videoPlayer.volume = volumeSlider.value; videoPlayer.muted = false; updateVolumeIcon(); };
-fullscreenBtn.onclick = toggleFullscreen;
-volumeSlider.value = videoPlayer.volume;
-updateVolumeIcon();
-}
-function togglePlayPause() {
-if (videoPlayer.paused || videoPlayer.ended) {
-videoPlayer.play().catch(() => showNotification('⚠️ Кликните по видео для запуска', 'error'));
-} else videoPlayer.pause();
-}
-function updateVolumeIcon() {
-const btn = document.getElementById('volume-btn');
-const icon = videoPlayer.muted || videoPlayer.volume === 0 ? 'volume-mute' :
-videoPlayer.volume < 0.5 ? 'volume-down' : 'volume-up';
-btn.innerHTML = `<i class="fas fa-${icon}"></i>`;
-}
-function toggleFullscreen() {
-const container = document.querySelector('.video-player-container');
-if (!document.fullscreenElement) {
-container.requestFullscreen?.() || container.mozRequestFullScreen?.() ||
-container.webkitRequestFullscreen?.() || container.msRequestFullscreen?.();
-} else {
-document.exitFullscreen?.() || document.mozCancelFullScreen?.() ||
-document.webkitExitFullscreen?.() || document.msExitFullscreen?.();
-}
-}
-function formatTime(sec) {
-if (isNaN(sec)) return '0:00';
-const m = Math.floor(sec / 60); const s = Math.floor(sec % 60);
-return `${m}:${s < 10 ? '0' : ''}${s}`;
-}
-// ===== MODAL CLOSE =====
-document.querySelector('.close-modal').onclick = closeVideoModal;
-document.getElementById('video-modal').onclick = (e) => {
-if (e.target.id === 'video-modal') closeVideoModal();
-};
-function closeVideoModal() {
-document.getElementById('video-modal').style.display = 'none';
-if (videoPlayer) { videoPlayer.pause(); videoPlayer.src = ''; }
-// Reset Disqus on close
-if (window.DISQUS) { window.DISQUS.reset({ reload: false }); }
-}
-// ===== INIT =====
-window.addEventListener('DOMContentLoaded', () => {
-const savedUser = localStorage.getItem('watchhive_user');
-if (savedUser) { const user = JSON.parse(savedUser); currentUser = user; authProvider = user.provider; }
-updateAuthUI();
-initGoogleAuth(); initVKAuth(); setupDemoAuth();
-document.getElementById('google-signin').addEventListener('click', () => {
-if (GOOGLE_CLIENT_ID && !GOOGLE_CLIENT_ID.startsWith('YOUR_')) { google.accounts.id.prompt(); }
-else { showNotification('⚠️ Настройте GOOGLE_CLIENT_ID в коде', 'error'); login({ name: 'Google User', email: 'user@gmail.com', avatar: null }, 'google'); }
-});
-document.getElementById('vk-signin').addEventListener('click', () => {
-if (VK_APP_ID && VK_APP_ID !== 12345678) { VK.Auth.login(vkAuthCallback, 'email'); }
-else { showNotification('⚠️ Настройте VK_APP_ID в коде', 'error'); login({ name: 'VK User', avatar: null }, 'vk'); }
-});
-document.getElementById('logout-btn').addEventListener('click', logout);
-fetchPopular(popularType);
-});
-</script>
+  <!-- ===== TOP SEARCH BAR ===== -->
+  <div class="top-search-bar">
+    <div class="search-container">
+      <input type="text" class="search-input" id="search-input" placeholder="Поиск фильмов, сериалов, дорам..." autocomplete="off">
+      <button class="clear-search" id="clear-search" title="Очистить"><i class="fas fa-times"></i></button>
+      <button class="search-btn" id="search-btn" title="Поиск"><i class="fas fa-search"></i></button>
+      <div class="search-results" id="search-results"></div>
+    </div>
+  </div>
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar">
+    <div class="sidebar-header"><h1>WatchHive</h1></div>
+
+    <!-- Навигация -->
+    <div class="sidebar-section">
+      <h3><i class="fas fa-compass"></i> Разделы</h3>
+      <nav class="sidebar-nav">
+        <ul>
+          <li><a href="#" data-page="popular" class="nav-btn active"><i class="fas fa-fire"></i> Популярное</a></li>
+          <li><a href="#" data-page="all" class="nav-btn"><i class="fas fa-th-large"></i> Все контенты</a></li>
+          <li><a href="#" data-page="favorites" class="nav-btn"><i class="fas fa-heart"></i> Избранное <span id="fav-count" class="badge-count">0</span></a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <!-- Авторизация -->
+    <div class="sidebar-section">
+      <h3><i class="fas fa-user"></i> Аккаунт</h3>
+      <div id="auth-buttons" class="auth-buttons">
+        <button class="oauth-btn google" id="google-signin"><i class="fab fa-google"></i> Войти через Google</button>
+        <button class="oauth-btn vk" id="vk-signin"><i class="fab fa-vk"></i> Войти через ВКонтакте</button>
+        <div class="oauth-divider">или</div>
+        <button class="type-btn" id="demo-login" style="width:100%; justify-content:center;"><i class="fas fa-user-circle"></i> Демо-вход</button>
+      </div>
+      <div id="user-profile" style="display:none;">
+        <div class="user-profile">
+          <div class="user-avatar" id="user-avatar"><i class="fas fa-user"></i></div>
+          <div class="user-info">
+            <div class="user-name" id="user-name">Пользователь</div>
+            <div class="user-email" id="user-provider">Вход через...</div>
+          </div>
+        </div>
+        <button class="logout-btn" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Выйти</button>
+      </div>
+    </div>
+
+    <!-- Тип контента -->
+    <div class="sidebar-section" id="type-section" style="display:none;">
+      <h3><i class="fas fa-filter"></i> Тип контента</h3>
+      <div class="type-buttons">
+        <button class="type-btn active" data-type="movie"><i class="fas fa-film"></i> Фильмы</button>
+        <button class="type-btn" data-type="tv"><i class="fas fa-tv"></i> Сериалы</button>
+        <button class="type-btn" data-type="korean"><i class="fas fa-globe-asia"></i> Дорамы</button>
+      </div>
+    </div>
+
+    <!-- Жанры -->
+    <div class="sidebar-section" id="genre-section" style="display:none;">
+      <div class="genre-header">
+        <h3><i class="fas fa-tags"></i> Жанры <span id="genre-count" class="selected-count"></span></h3>
+        <button class="clear-genres-btn" id="clear-genres-btn"><i class="fas fa-times"></i> Сбросить</button>
+      </div>
+      <div class="genre-buttons" id="genres-container"></div>
+    </div>
+  </aside>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="main-content">
+    <!-- Популярное -->
+    <div id="popular-page" class="page active">
+      <div class="page-header"><h2>🔥 Популярное сегодня</h2></div>
+      <div id="items-container-popular" class="items-grid"></div>
+      <div id="loading-popular" class="loading"><i class="fas fa-spinner fa-spin"></i> Загрузка...</div>
+      <div id="error-popular" class="error-message"></div>
+    </div>
+
+    <!-- Все контенты -->
+    <div id="all-page" class="page">
+      <div class="page-header">
+        <h2>📚 Все контенты</h2>
+        <div class="active-filters" id="active-filters"></div>
+      </div>
+      <div id="items-container-all" class="items-grid"></div>
+      <div id="loading-all" class="loading"><i class="fas fa-spinner fa-spin"></i> Загрузка...</div>
+      <div id="error-all" class="error-message"></div>
+    </div>
+
+    <!-- Избранное -->
+    <div id="favorites-page" class="page">
+      <div class="page-header">
+        <h2>❤️ Моё Избранное</h2>
+        <p style="color:#888; font-size:0.9rem;">Ваши сохранённые фильмы и сериалы</p>
+      </div>
+      <div id="items-container-favorites" class="items-grid"></div>
+      <div id="loading-favorites" class="loading"><i class="fas fa-spinner fa-spin"></i> Загрузка...</div>
+      <div id="error-favorites" class="error-message"></div>
+      <div id="empty-favorites" style="text-align:center; padding: 50px; color:#666; display:none;">
+        <i class="far fa-heart" style="font-size: 3rem; margin-bottom: 15px; display:block;"></i>
+        <p>Список избранного пуст</p>
+        <p style="font-size:0.9rem">Добавляйте фильмы, нажимая на сердечко ❤️</p>
+      </div>
+    </div>
+
+    <!-- Поиск -->
+    <div id="search-page" class="page">
+      <div class="page-header">
+        <h2>🔍 Результаты поиска</h2>
+        <div class="active-filters" id="search-filters"></div>
+      </div>
+      <div id="items-container-search" class="items-grid"></div>
+      <div id="loading-search" class="loading"><i class="fas fa-spinner fa-spin"></i> Поиск...</div>
+      <div id="error-search" class="error-message"></div>
+    </div>
+  </main>
+
+  <footer>&copy; 2026 WatchHive — ваш гид по миру кино и сериалов</footer>
+
+  <!-- ===== MODALS ===== -->
+  <div id="auth-modal" class="modal">
+    <div class="modal-content auth-modal-content">
+      <span class="close-modal" id="close-auth">&times;</span>
+      <h2><i class="fas fa-user-circle"></i> Демо-вход</h2>
+      <p>Для тестирования введите любое имя</p>
+      <input type="text" class="auth-input" id="demo-username" placeholder="Ваше имя">
+      <button class="auth-btn" id="demo-login-btn">Войти</button>
+      <p class="auth-hint">
+        <i class="fas fa-info-circle"></i>
+        Для полноценной авторизации настройте приложение в 
+        <a href="https://console.cloud.google.com/" target="_blank">Google Cloud</a> или 
+        <a href="https://vk.com/dev" target="_blank">VK Developers</a>
+      </p>
+    </div>
+  </div>
+
+  <div id="video-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <div class="video-player-container">
+        <video id="video-player" class="video-player" preload="auto" playsinline webkit-playsinline>
+          <source src="" type="video/mp4">
+          Ваш браузер не поддерживает видео в формате HTML5.
+        </video>
+        <div class="video-controls">
+          <button class="control-btn" id="play-pause" title="Воспроизвести/Пауза"><i class="fas fa-play"></i></button>
+          <div class="progress-container" id="progress-container"><div class="progress-bar" id="progress-bar"></div></div>
+          <span class="time-display" id="time-display">0:00 / 0:00</span>
+          <button class="control-btn" id="volume-btn" title="Звук"><i class="fas fa-volume-up"></i></button>
+          <div class="volume-container"><input type="range" id="volume-slider" min="0" max="1" step="0.05" value="1"></div>
+          <button class="control-btn" id="fullscreen-btn" title="Полноэкранный режим"><i class="fas fa-expand"></i></button>
+        </div>
+      </div>
+      <div class="video-info">
+        <img id="modal-poster" class="video-poster" src="" alt="Постер">
+        <div class="video-details">
+          <h2 id="modal-title" class="video-title">Загрузка...</h2>
+          <div class="video-meta">
+            <span id="modal-rating" class="badge rating">★ 0.0</span>
+            <span id="modal-year" class="badge">📅 2026</span>
+            <span id="modal-duration" class="badge">⏱ 0 мин</span>
+            <span id="modal-genres" class="badge">🎭 ...</span>
+          </div>
+          <p id="modal-description" class="video-description">Загрузка описания...</p>
+          
+          <!-- Комментарии -->
+          <div class="comments-tabs">
+            <button class="comments-tab active" data-tab="description"><i class="fas fa-align-left"></i> Описание</button>
+            <button class="comments-tab" data-tab="comments"><i class="fas fa-comments"></i> Комментарии <span id="comments-count" class="badge-count" style="margin-left:5px;display:none">0</span></button>
+          </div>
+          <div id="tab-description" class="comments-container active">
+            <p id="modal-description-full" style="color:#bbb;line-height:1.7;font-size:0.95rem;"></p>
+          </div>
+          <div id="tab-comments" class="comments-container">
+            <div id="disqus-container"><div id="disqus-thread"></div></div>
+            <div id="disqus-hint" class="comments-hint" style="display:none;">
+              <i class="fas fa-comments"></i>
+              <p>Комментарии загружаются...</p>
+              <p style="font-size:0.85rem;color:#666;margin-top:10px;">
+                Не видно комментарии? <a href="https://disqus.com/" target="_blank">Проверьте подключение</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SCRIPTS (порядок важен!) ===== -->
+  <script src="config.js"></script>
+  <script src="state.js"></script>
+  <script src="utils.js"></script>
+  <script src="auth.js"></script>
+  <script src="favorites.js"></script>
+  <script src="search.js"></script>
+  <script src="navigation.js"></script>
+  <script src="genres.js"></script>
+  <script src="api.js"></script>
+  <script src="items.js"></script>
+  <script src="comments.js"></script>
+  <script src="video-player.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
